@@ -1,0 +1,73 @@
+
+*
+  box-sizing: border-box
+
+#app
+  width: 100%
+  max-width: 1440px
+  margin: 0 auto
+
+body
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif
+  font-weight: 400
+
+  color-scheme: light dark
+  color: rgba(255, 255, 255, 0.87)
+  background-color: $main
+
+  margin: 0
+  display: flex
+  min-height: 100dvh
+
+.video-section
+  display: flex
+  gap: 1em
+  flex-wrap: wrap
+  &__item
+    width: 322px
+    height: 175px
+    border-radius: 10px
+    object-fit: cover
+  &__item-wrapper
+    border-radius: 10px
+  &__item-name
+    width: 322px
+    white-space: nowrap
+    font-size: 1.4em
+    line-height: 2em
+    font-weight: 500
+    overflow: hidden 
+    text-overflow: ellipsis
+
+a
+  text-decoration: none
+  color: $textColor
+
+.video
+  width: 940px
+  max-height: 529px
+  border-radius: 20px
+  &__name
+    padding-left: .2em
+    font-size: 1.4em
+    line-height: 2em
+    font-weight: 500
+
+
+
+
+.logo
+  height: 6em
+  padding: 1.5em
+  will-change: filter
+  transition: filter 300ms
+
+.logo:hover
+  filter: drop-shadow(0 0 2em #646cffaa)
+
+.logo.vue:hover
+  filter: drop-shadow(0 0 2em #42b883aa)
+
+@media screen and (max-width: 1440px)
+  #app
+    padding: 0 1em
