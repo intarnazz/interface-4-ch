@@ -26,6 +26,7 @@ onMounted(async () => {
           <video
             :src="`${API_URL}image/${id}?tred=video_api`"
             class="video-section__item"
+            preload="metadata" 
           ></video>
           <p class="video-section__item-name">
             {{ item.name }}
@@ -36,6 +37,6 @@ onMounted(async () => {
   </main>
 </template>
 
-<style>
-@import "@/assets/css/style.sass";
+<style lang="sass">
+@import "@/assets/css/style.sass"
 </style>

@@ -11,13 +11,22 @@ body
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif
   font-weight: 400
 
-  color-scheme: light dark
-  color: rgba(255, 255, 255, 0.87)
+  color: $textColor
   background-color: $main
 
   margin: 0
   display: flex
   min-height: 100dvh
+
+::-webkit-scrollbar
+  width: 7px 
+
+::-webkit-scrollbar-vertical
+  background-color: #f1f1f1 
+
+::-webkit-scrollbar-thumb
+  background-color: $subBgColor
+  border-radius: 6px
 
 .video-section
   display: flex
@@ -36,15 +45,12 @@ body
     font-size: 1.4em
     line-height: 1.4em
     font-weight: 500
-    overflow: hidden 
+    overflow: hidden
     text-overflow: ellipsis
 
 a
   text-decoration: none
   color: $textColor
-
-
-
 
 .logo
   height: 6em

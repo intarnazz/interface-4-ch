@@ -10,7 +10,6 @@ onMounted(async () => {
     .then((json) => {
       arr.value = json.data;
     });
-  console.log(arr.value);
 });
 </script>
 
