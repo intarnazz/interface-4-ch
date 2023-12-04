@@ -1,4 +1,8 @@
 <script setup>
+
+// [] сделать коменты
+// [] login user
+
 import { onMounted, ref } from "vue";
 
 const API_URL = "http://127.0.0.1:5000/";
