@@ -19,14 +19,102 @@ body
   min-height: 100dvh
 
 ::-webkit-scrollbar
-  width: 7px 
+  width: 7px
 
 ::-webkit-scrollbar-vertical
-  background-color: #f1f1f1 
+  background-color: #f1f1f1
 
 ::-webkit-scrollbar-thumb
   background-color: $subBgColor
   border-radius: 6px
+
+hr
+  width: 99%
+  margin: 10px auto
+  border: 1px $subBgColor solid
+
+.popup
+  z-index: 2
+  left: 0
+  top: 0
+
+.popup-login
+  width: 100vw
+  height: 100dvh
+  position: fixed
+  background-color: rgba(0, 0, 0, 0.9)
+  display: flex
+  align-items: center
+  justify-content: center
+  &__form
+    display: flex
+    flex-direction: column
+    align-items: center
+    justify-content: center
+    width: 500px
+    height: 500px
+    background-color: $formPost
+    border-radius: 20px
+    gap: 20px
+  &__row
+    display: flex
+    justify-content: space-between
+    width: 300px
+
+.popup-user-info
+  position: absolute
+  width: 300px
+  background-color: #282828
+  left: -240px
+  border-radius: 20px
+  cursor: default
+  padding-bottom: 1em
+  &__header
+    padding: 1em
+    display: flex
+    align-items: center
+    gap: 1em
+  &__ava
+    width: 40px
+    height: 40px
+    border-radius: 40px
+    object-fit: cover
+  &__item
+    padding: .5em 1em
+    display: flex
+    align-items: center
+    gap: .5em
+    cursor: pointer
+  &__item:hover
+    background-color: $subBgColor
+  &__bg
+    z-index: 1
+    position: fixed
+    height: 100dvh
+    width: 100vw
+    top: 0
+    left: 0
+
+
+
+.header
+  display: flex
+  justify-content: space-between
+  align-items: center
+  &__button-loggin
+    padding-left: 6px
+    color: #64b4ff
+    display: flex
+    align-items: center
+    border-radius: 20px
+    cursor: pointer
+    height: 34px
+    width: 94px
+    background: none
+    border: 2px $subBgColor solid
+  &__button-loggin:hover
+    border: 2px rgba(100, 180, 255, 0) solid
+    background-color: rgba(100, 180, 255, 0.1)
 
 .video-section
   display: flex
@@ -48,6 +136,21 @@ body
     overflow: hidden
     text-overflow: ellipsis
 
+.user
+  display: flex
+  align-items: center
+  gap: 1em
+  position: relative
+  cursor: pointer
+  &__ava
+    width: 32px
+    height: 32px
+    border-radius: 32px
+    object-fit: cover
+  // &__ava-wrapper
+  //   overflow: hidden
+    
+
 a
   text-decoration: none
   color: $textColor
@@ -63,6 +166,10 @@ a
 
 .logo.vue:hover
   filter: drop-shadow(0 0 2em #42b883aa)
+
+.popup
+  &__close
+    display: none
 
 @media screen and (max-width: 1440px)
   #app

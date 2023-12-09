@@ -15,6 +15,7 @@ const dislikeClickActiv = ref(false);
 async function fetchData() {
   loding.value = true;
   likeClickActiv.value = false;
+  dislikeClickActiv.value = false;
   await fetch(`${API_URL}api/${$route.params.id}`)
     .then((response) => response.json())
     .then((json) => {
@@ -199,7 +200,7 @@ watch(() => $route.params.id, fetchData);
     position: absolute
     width: 78%
     height: 1px
-    bottom: 0
+    bottom: -5px
     left: 11%
     display: flex
     &_like
