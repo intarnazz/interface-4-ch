@@ -64,11 +64,6 @@ function logout() {
 </script>
 
 <template>
-  <div
-    v-if="userInfoOpen"
-    @click.stop="userInfoColseEvent()"
-    class="popup-user-info__bg"
-  ></div>
   <header class="header">
     <RouterLink :to="{ name: 'Home' }">
       <img src="/vite.svg" class="logo" alt="Vite logo" />
@@ -123,16 +118,23 @@ function logout() {
       action=""
     >
       <p class="popup-login__row">
-        <label for="">Login</label><input v-model="login" type="text" />
+        <label for="">Login</label
+        ><input v-model="login" type="text" class="popup-login__input" />
       </p>
       <p class="popup-login__row">
         <label for="">password</label
-        ><input v-model="pasword" type="password" />
+        ><input v-model="pasword" type="password" class="popup-login__input" />
       </p>
-      <p class="popup-login__row"><input type="submit" /></p>
+      <p class="popup-login__row"><input type="submit" class="popup-login__input" /></p>
     </form>
   </div>
   <RouterView />
+  <div
+    v-if="userInfoOpen"
+    @click="userInfoColseEvent()"
+    style="pointer-events: auto"
+    class="popup-user-info__bg"
+  ></div>
 </template>
 
 <style lang="sass">
