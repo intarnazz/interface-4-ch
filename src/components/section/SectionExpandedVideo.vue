@@ -4,6 +4,7 @@ import { useRoute } from "vue-router";
 import { videoGET, CommentGET, CommentPOST } from "@/api/api.js";
 import SectionVideoAside from "@/components/section/SectionVideoAside.vue";
 import ComponentUserReact from "@/components/ComponentUserReact.vue";
+import ComponentDescription from "@/components/ComponentDescription.vue";
 
 const API_URL = import.meta.env.VITE_API_URL;
 const arr = ref(null);
@@ -15,7 +16,6 @@ const commentSectionInputFocusFirst = ref(false);
 const commentSectionInputValue = ref("");
 const ButtonDisabled = ref(true);
 const comments = ref({});
-const descriptionOpen = ref(false);
 
 async function fetchData() {
   if (localStorage.getItem("user")) {
@@ -65,9 +65,6 @@ function commentSectionClear() {
   commentSectionInputFocusFirst.value = false;
   commentSectionInputValue.value = "";
 }
-function descriptionOpenEvent(e) {
-  e ? (descriptionOpen.value = true) : (descriptionOpen.value = false);
-}
 watch(() => $route.params.id, fetchData);
 watch(() => commentSectionInputValue.value, commentSectionInputValueChange);
 </script>
@@ -90,40 +87,7 @@ watch(() => commentSectionInputValue.value, commentSectionInputValueChange);
           <ComponentUserReact />
         </div>
         <hr />
-        <div class="video-wrapper__sub-text">
-          <div
-            @click="descriptionOpenEvent(true)"
-            class="video-wrapper__description"
-            :class="{ descriptionClose: !descriptionOpen }"
-          >
-            <p
-              class="video-wrapper__description_p"
-              :class="{ descriptionOpen: descriptionOpen }"
-            >
-              ✅Lorem ipsum, dolor sit amet consectetur,<br />
-              ✅adipisicing elit. Aliquid,<br />
-              ✅voluptate sequi, magni quis dicta veritatis voluptatum.<br />
-              reprehenderit deleniti, id optio praesentium. Aut ut consectetur
-              necessitatibus nulla porro asperiores eos laboriosam? Lorem ipsum
-              dolor sit amet consectetur adipisicing elit. Atque asperiores
-              accusamus a minima, nemo eligendi. Atque, dolore iure. Suscipit,
-              asperiores? Sapiente nihil voluptatum labore, veniam ullam facere
-              consectetur ut doloremque?
-            </p>
-            <div>
-              <span v-if="!descriptionOpen" style="font-weight: 700"
-                >...more</span
-              >
-              <div
-                v-else
-                @click.stop="descriptionOpenEvent(false)"
-                style="font-weight: 700; cursor: pointer"
-              >
-                Show less
-              </div>
-            </div>
-          </div>
-        </div>
+        <ComponentDescription />
         <section class="comment-section">
           <h2 class="comment-section__title">
             {{ Object.keys(comments).length }} Comments
@@ -323,11 +287,4 @@ watch(() => commentSectionInputValue.value, commentSectionInputValueChange);
   background-color: $subBgColor
   color: rgba(255, 255, 255, 0.5)
   cursor: default
-
-.descriptionOpen
-  height: auto
-
-.descriptionClose:hover
-  transition: .1s
-  background-color: rgba(255, 255, 255, 0.2)
 </style>
