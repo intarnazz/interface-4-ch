@@ -1,8 +1,9 @@
 <script setup>
 import { computed, onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
+import { videoGET, CommentGET, likeGET, CommentPOST } from "@/api/api.js";
 
-const API_URL = "http://127.0.0.1:5000/";
+const API_URL = import.meta.env.VITE_API_URL;
 const arr = ref(null);
 const arrAside = ref(null);
 const $route = useRoute();
@@ -22,29 +23,20 @@ const descriptionOpen = ref(false);
 async function fetchData() {
   if (localStorage.getItem("user")) {
     authorizedLogin.value = localStorage.getItem("user");
-    console.log(authorizedLogin.value);
   }
   loding.value = true;
   likeClickActiv.value = false;
   dislikeClickActiv.value = false;
-  await fetch(`${API_URL}api/${$route.params.id}`)
-    .then((response) => response.json())
-    .then((json) => {
-      arr.value = json.data;
-    });
+
+  arr.value = await videoGET($route.params.id);
+
   like.value = arr.value[$route.params.id].like ?? 0;
   dislike.value = arr.value[$route.params.id].dislike ?? 0;
-  await fetch(`${API_URL}api`)
-    .then((response) => response.json())
-    .then((json) => {
-      arrAside.value = json.data;
-    });
+
+  arrAside.value = await videoGET();
+
   loding.value = false;
-  await fetch(`${API_URL}api/GetComment/${$route.params.id}`)
-    .then((response) => response.json())
-    .then((json) => {
-      comments.value = Object.values(json);
-    });
+  comments.value = await CommentGET($route.params.id);
 }
 
 onMounted(async () => {
@@ -67,10 +59,9 @@ async function likeClick() {
     ++like.value;
     dislikeClickActiv.value = false;
     likeClickActiv.value = true;
-    await fetch(
-      `${API_URL}api/like/${$route.params.id}?delta=-1&event=dislike`
-    );
-    await fetch(`${API_URL}api/like/${$route.params.id}?delta=1&event=like`);
+
+    await likeGET($route.params.id, -1, "dislike");
+    await likeGET($route.params.id, 1, "like");
   } else {
     let delta;
     if (!likeClickActiv.value) {
@@ -81,9 +72,8 @@ async function likeClick() {
       delta = -1;
     }
     like.value = like.value + delta;
-    await fetch(
-      `${API_URL}api/like/${$route.params.id}?delta=${delta}&event=like`
-    );
+
+    await likeGET($route.params.id, delta, "like");
   }
 }
 
@@ -93,8 +83,8 @@ async function dislikeClick() {
     ++dislike.value;
     dislikeClickActiv.value = true;
     likeClickActiv.value = false;
-    await fetch(`${API_URL}api/like/${$route.params.id}?delta=-1&event=like`);
-    await fetch(`${API_URL}api/like/${$route.params.id}?delta=1&event=dislike`);
+    await likeGET($route.params.id, -1, "like");
+    await likeGET($route.params.id, 1, "dislike");
   } else {
     let delta;
     if (!dislikeClickActiv.value) {
@@ -105,34 +95,23 @@ async function dislikeClick() {
       delta = -1;
     }
     dislike.value = dislike.value + delta;
-    await fetch(
-      `${API_URL}api/like/${$route.params.id}?delta=${delta}&event=dislike`
-    );
+
+    await likeGET($route.params.id, delta, "dislike");
   }
 }
 async function commentPost() {
-  await fetch(`${API_URL}api/Comment`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      login: localStorage.getItem("user"),
-      password: localStorage.getItem("pasword"),
-      post_id: $route.params.id,
-      comment_text: commentSectionInputValue.value,
-    }),
-  })
-    .then((response) => response.json())
-    .then((json) => {
-      if (json.code === 200) {
-        comments.value.unshift({
-          text: commentSectionInputValue.value,
-          user: localStorage.getItem("user"),
-        });
-      }
+  const msg = commentSectionInputValue.value;
+  commentSectionInputValue.value = "";
+  const user = localStorage.getItem("user");
+  const psw = localStorage.getItem("pasword");
+  
+  const code = await CommentPOST(user, psw, $route.params.id, msg);
+  if (code === 200) {
+    comments.value.unshift({
+      text: msg,
+      user: user,
     });
-  commentSectionClear();
+  }
 }
 function commentSectionInputFocusEvent(e) {
   if (e) {
@@ -154,7 +133,7 @@ function commentSectionClear() {
   commentSectionInputValue.value = "";
 }
 function descriptionOpenEvent(e) {
-  e ? descriptionOpen.value = true : descriptionOpen.value = false;
+  e ? (descriptionOpen.value = true) : (descriptionOpen.value = false);
 }
 watch(() => $route.params.id, fetchData);
 watch(() => commentSectionInputValue.value, commentSectionInputValueChange);
@@ -214,7 +193,6 @@ watch(() => commentSectionInputValue.value, commentSectionInputValueChange);
             @click="descriptionOpenEvent(true)"
             class="video-wrapper__description"
             :class="{ descriptionClose: !descriptionOpen }"
-
           >
             <p
               class="video-wrapper__description_p"
@@ -237,9 +215,10 @@ watch(() => commentSectionInputValue.value, commentSectionInputValueChange);
               <div
                 v-else
                 @click.stop="descriptionOpenEvent(false)"
-                style="font-weight: 700; cursor: pointer;"
-                >Show less</div
+                style="font-weight: 700; cursor: pointer"
               >
+                Show less
+              </div>
             </div>
           </div>
         </div>
@@ -289,12 +268,6 @@ watch(() => commentSectionInputValue.value, commentSectionInputValueChange);
                 v-if="commentSectionInputFocusFirst"
                 class="comment-section__button-wrapper"
               >
-                <button
-                  @click="commentSectionClear()"
-                  class="comment-section__button-clear"
-                >
-                  Cancel
-                </button>
                 <input
                   :disabled="ButtonDisabled"
                   value="Comment"
@@ -302,6 +275,12 @@ watch(() => commentSectionInputValue.value, commentSectionInputValueChange);
                   :class="{ ButtonDisabled: ButtonDisabled }"
                   type="submit"
                 />
+                <button
+                  @click="commentSectionClear()"
+                  class="comment-section__button-clear"
+                >
+                  Cancel
+                </button>
               </div>
             </form>
           </div>
@@ -402,6 +381,7 @@ watch(() => commentSectionInputValue.value, commentSectionInputValueChange);
   &__button-wrapper
     margin-top: 1em
     display: flex
+    flex-direction: row-reverse
     justify-content: end
     gap: 1em
   &__input-sub-line

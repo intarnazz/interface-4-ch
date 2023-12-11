@@ -1,8 +1,8 @@
 <script setup>
 import { onMounted, ref } from "vue";
+import { loginPOST } from "@/api/api.js";
 
-const API_URL = "http://127.0.0.1:5000/";
-const arr = ref(null);
+const API_URL = import.meta.env.VITE_API_URL;
 const login = ref("");
 const pasword = ref("");
 const authorizedLogin = ref(null);
@@ -14,33 +14,16 @@ onMounted(async () => {
     authorizedLogin.value = localStorage.getItem("user");
     console.log(authorizedLogin.value);
   }
-  await fetch(`${API_URL}api`)
-    .then((response) => response.json())
-    .then((json) => {
-      arr.value = json.data;
-    });
 });
 
 async function submitForm() {
-  await fetch(`${API_URL}login`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      login: login.value,
-      password: pasword.value,
-    }),
-  })
-    .then((response) => response.json())
-    .then((json) => {
-      if (json.code === 200) {
-        authorizedLogin.value = login.value;
-        localStorage.setItem("user", login.value);
-        localStorage.setItem("pasword", pasword.value);
-        loginFormOpen.value = false;
-      }
-    });
+  const code = await loginPOST(login.value, pasword.value);
+  if (code === 200) {
+    authorizedLogin.value = login.value;
+    localStorage.setItem("user", login.value);
+    localStorage.setItem("pasword", pasword.value);
+    loginFormOpen.value = false;
+  }
 }
 
 function popupOpenEvent() {
@@ -125,7 +108,9 @@ function logout() {
         <label for="">password</label
         ><input v-model="pasword" type="password" class="popup-login__input" />
       </p>
-      <p class="popup-login__row"><input type="submit" class="popup-login__input" /></p>
+      <p class="popup-login__row">
+        <input type="submit" class="popup-login__input" />
+      </p>
     </form>
   </div>
   <RouterView />
