@@ -7,9 +7,9 @@ const API_URL = import.meta.env.VITE_API_URL;
 const $route = useRoute();
 const loding = ref(true);
 const authorizedLogin = ref(null);
-const commentSectionInputFocus = ref(false);
-const commentSectionInputFocusFirst = ref(false);
-const commentSectionInputValue = ref("");
+const InputFocus = ref(false);
+const InputFocusFirst = ref(false);
+const InputValue = ref("");
 const ButtonDisabled = ref(true);
 const comments = ref({});
 
@@ -27,8 +27,8 @@ onMounted(async () => {
   await fetchData();
 });
 async function commentPost() {
-  const msg = commentSectionInputValue.value;
-  commentSectionInputValue.value = "";
+  const msg = InputValue.value;
+  InputValue.value = "";
   const user = localStorage.getItem("user");
   const psw = localStorage.getItem("pasword");
 
@@ -40,26 +40,26 @@ async function commentPost() {
     });
   }
 }
-function commentSectionInputFocusEvent(e) {
+function InputFocusEvent(e) {
   if (e) {
-    commentSectionInputFocusFirst.value = true;
-    commentSectionInputFocus.value = true;
+    InputFocusFirst.value = true;
+    InputFocus.value = true;
   } else {
-    commentSectionInputFocus.value = false;
+    InputFocus.value = false;
   }
 }
-function commentSectionInputValueChange() {
-  if (commentSectionInputValue.value) {
+function InputValueChange() {
+  if (InputValue.value) {
     ButtonDisabled.value = false;
   } else {
     ButtonDisabled.value = true;
   }
 }
 function commentSectionClear() {
-  commentSectionInputFocusFirst.value = false;
-  commentSectionInputValue.value = "";
+  InputFocusFirst.value = false;
+  InputValue.value = "";
 }
-watch(() => commentSectionInputValue.value, commentSectionInputValueChange);
+watch(() => InputValue.value, InputValueChange);
 </script>
 
 <template>
@@ -75,9 +75,9 @@ watch(() => commentSectionInputValue.value, commentSectionInputValueChange);
       />
       <form @submit.prevent="commentPost" class="comment-section__form">
         <input
-          @focusin="commentSectionInputFocusEvent(true)"
-          @focusout="commentSectionInputFocusEvent(false)"
-          v-model="commentSectionInputValue"
+          @focusin="InputFocusEvent(true)"
+          @focusout="InputFocusEvent(false)"
+          v-model="InputValue"
           placeholder="Add a comment..."
           class="comment-section__input"
           type="text"
@@ -87,26 +87,26 @@ watch(() => commentSectionInputValue.value, commentSectionInputValueChange);
             class="comment-section__input-sub-line_aside"
             :class="{
               'comment-section__input-sub-line_aside-activ':
-                commentSectionInputFocus,
+                InputFocus,
             }"
           ></div>
           <div
             class="comment-section__input-sub-line_center"
             :class="{
               'comment-section__input-sub-line_center-activ':
-                commentSectionInputFocus,
+                InputFocus,
             }"
           ></div>
           <div
             class="comment-section__input-sub-line_aside"
             :class="{
               'comment-section__input-sub-line_aside-activ':
-                commentSectionInputFocus,
+                InputFocus,
             }"
           ></div>
         </div>
         <div
-          v-if="commentSectionInputFocusFirst"
+          v-if="InputFocusFirst"
           class="comment-section__button-wrapper"
         >
           <input
