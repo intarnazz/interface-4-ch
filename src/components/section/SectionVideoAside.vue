@@ -40,8 +40,10 @@ onMounted(async () => {
 <style lang="sass" scoped>
 
 .video-section
+  display: flex
   flex: 1
   flex-direction: column
+  gap: 1em
   &__item-wrapper
     display: flex
     gap: 1em
@@ -57,4 +59,6 @@ onMounted(async () => {
   &__item
     width: 168px
     height: 94px
+    object-fit: cover
+    border-radius: 10px
 </style>
