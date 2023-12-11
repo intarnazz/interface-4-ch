@@ -1,60 +1,14 @@
-const API_URL = import.meta.env.VITE_API_URL;
+import * as videoGETModule from "./videoGET/videoGET.js";
+export const videoGET = videoGETModule.videoGET;
 
-export async function videoGET(id = "") {
-  if (id !== "") {
-    id = "/" + id;
-  }
-  return await fetch(`${API_URL}api${id}`)
-    .then((response) => response.json())
-    .then((json) => {
-      return json.data;
-    });
-}
+import * as CommentGETModule from "./CommentGET/CommentGET.js";
+export const CommentGET = CommentGETModule.CommentGET;
 
-export async function CommentGET(id) {
-  return await fetch(`${API_URL}api/GetComment/${id}`)
-    .then((response) => response.json())
-    .then((json) => {
-      return Object.values(json);
-    });
-}
+import * as likeGETModule from "./likeGET/likeGET.js";
+export const likeGET = likeGETModule.likeGET;
 
-export async function likeGET(id, delta, event) {
-  return await fetch(`${API_URL}api/like/${id}?delta=${delta}&event=${event}`);
-}
+import * as CommentPOSTModule from "./CommentPOST/CommentPOST.js";
+export const CommentPOST = CommentPOSTModule.CommentPOST;
 
-export async function CommentPOST(user, psw, id, msg) {
-  return await fetch(`${API_URL}api/Comment`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      login: user,
-      password: psw,
-      post_id: id,
-      comment_text: msg,
-    }),
-  })
-    .then((response) => response.json())
-    .then((json) => {
-      return json.code;
-    });
-}
-
-export async function loginPOST(login, pasword) {
-  return await fetch(`${API_URL}login`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      login: login,
-      password: pasword,
-    }),
-  })
-    .then((response) => response.json())
-    .then((json) => {
-      return json.code;
-    });
-}
+import * as loginPOSTModule from "./loginPOST/loginPOST.js";
+export const loginPOST = loginPOSTModule.loginPOST;
