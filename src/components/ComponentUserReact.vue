@@ -1,11 +1,10 @@
 <script setup>
 import { computed, onMounted, ref } from "vue";
-import { likeGET, videoGET } from "@/api/api.js";
-
-const props = defineProps(['id']);
+import { useRoute } from "vue-router";
+import { videoGET, likeGET } from "@/api/api.js";
 
 const arr = ref(null);
-const id = ref(props.id);
+const $route = useRoute();
 const like = ref(0);
 const dislike = ref(0);
 const likeClickActiv = ref(false);
@@ -14,10 +13,9 @@ const dislikeClickActiv = ref(false);
 async function fetchData() {
   likeClickActiv.value = false;
   dislikeClickActiv.value = false;
-  arr.value = await videoGET(id);
-
-  like.value = arr.value[id].like ?? 0;
-  dislike.value = arr.value[id].dislike ?? 0;
+  arr.value = await videoGET($route.params.id);
+  like.value = arr.value[$route.params.id].like ?? 0;
+  dislike.value = arr.value[$route.params.id].dislike ?? 0;
 }
 
 onMounted(async () => {
@@ -41,8 +39,8 @@ async function likeClick() {
     dislikeClickActiv.value = false;
     likeClickActiv.value = true;
 
-    await likeGET(id, -1, "dislike");
-    await likeGET(id, 1, "like");
+    await likeGET($route.params.id, -1, "dislike");
+    await likeGET($route.params.id, 1, "like");
   } else {
     let delta;
     if (!likeClickActiv.value) {
@@ -54,7 +52,7 @@ async function likeClick() {
     }
     like.value = like.value + delta;
 
-    await likeGET(id, delta, "like");
+    await likeGET($route.params.id, delta, "like");
   }
 }
 
@@ -64,8 +62,8 @@ async function dislikeClick() {
     ++dislike.value;
     dislikeClickActiv.value = true;
     likeClickActiv.value = false;
-    await likeGET(id, -1, "like");
-    await likeGET(id, 1, "dislike");
+    await likeGET($route.params.id, -1, "like");
+    await likeGET($route.params.id, 1, "dislike");
   } else {
     let delta;
     if (!dislikeClickActiv.value) {
@@ -77,7 +75,7 @@ async function dislikeClick() {
     }
     dislike.value = dislike.value + delta;
 
-    await likeGET(id, delta, "dislike");
+    await likeGET($route.params.id, delta, "dislike");
   }
 }
 </script>

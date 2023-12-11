@@ -1,7 +1,7 @@
 <script setup>
-import { computed, onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
-import { videoGET, CommentGET, likeGET, CommentPOST } from "@/api/api.js";
+import { videoGET, CommentGET, CommentPOST } from "@/api/api.js";
 import SectionVideoAside from "@/components/section/SectionVideoAside.vue";
 import ComponentUserReact from "@/components/ComponentUserReact.vue";
 
@@ -9,10 +9,6 @@ const API_URL = import.meta.env.VITE_API_URL;
 const arr = ref(null);
 const $route = useRoute();
 const loding = ref(true);
-const like = ref(0);
-const dislike = ref(0);
-const likeClickActiv = ref(false);
-const dislikeClickActiv = ref(false);
 const authorizedLogin = ref(null);
 const commentSectionInputFocus = ref(false);
 const commentSectionInputFocusFirst = ref(false);
@@ -26,13 +22,8 @@ async function fetchData() {
     authorizedLogin.value = localStorage.getItem("user");
   }
   loding.value = true;
-  likeClickActiv.value = false;
-  dislikeClickActiv.value = false;
 
   arr.value = await videoGET($route.params.id);
-
-  like.value = arr.value[$route.params.id].like ?? 0;
-  dislike.value = arr.value[$route.params.id].dislike ?? 0;
 
   loding.value = false;
   comments.value = await CommentGET($route.params.id);
@@ -41,63 +32,6 @@ async function fetchData() {
 onMounted(async () => {
   await fetchData();
 });
-
-const likeFix = computed(() => {
-  return like.value >= 1000 ? (like.value / 1000).toFixed(1) + "K" : like.value;
-});
-
-const dislikeFix = computed(() => {
-  return dislike.value >= 1000
-    ? (dislike.value / 1000).toFixed(1) + "K"
-    : dislike.value;
-});
-
-async function likeClick() {
-  if (dislikeClickActiv.value) {
-    --dislike.value;
-    ++like.value;
-    dislikeClickActiv.value = false;
-    likeClickActiv.value = true;
-
-    await likeGET($route.params.id, -1, "dislike");
-    await likeGET($route.params.id, 1, "like");
-  } else {
-    let delta;
-    if (!likeClickActiv.value) {
-      likeClickActiv.value = true;
-      delta = 1;
-    } else {
-      likeClickActiv.value = false;
-      delta = -1;
-    }
-    like.value = like.value + delta;
-
-    await likeGET($route.params.id, delta, "like");
-  }
-}
-
-async function dislikeClick() {
-  if (likeClickActiv.value) {
-    --like.value;
-    ++dislike.value;
-    dislikeClickActiv.value = true;
-    likeClickActiv.value = false;
-    await likeGET($route.params.id, -1, "like");
-    await likeGET($route.params.id, 1, "dislike");
-  } else {
-    let delta;
-    if (!dislikeClickActiv.value) {
-      dislikeClickActiv.value = true;
-      delta = 1;
-    } else {
-      dislikeClickActiv.value = false;
-      delta = -1;
-    }
-    dislike.value = dislike.value + delta;
-
-    await likeGET($route.params.id, delta, "dislike");
-  }
-}
 async function commentPost() {
   const msg = commentSectionInputValue.value;
   commentSectionInputValue.value = "";
@@ -153,7 +87,7 @@ watch(() => commentSectionInputValue.value, commentSectionInputValueChange);
           <h2 class="video__name">
             {{ arr[$route.params.id].name }}
           </h2>
-          <ComponentUserReact :id="$route.params.id" />
+          <ComponentUserReact />
         </div>
         <hr />
         <div class="video-wrapper__sub-text">
@@ -352,49 +286,6 @@ watch(() => commentSectionInputValue.value, commentSectionInputValueChange);
       flex: 0
       border-top: 1px $subBgColor solid
       transition: .5s
-
-
-
-
-.material-symbols-outlined
-  font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 24
-
-.reaction
-  position: relative
-  user-select: none
-  cursor: pointer
-  background: $subBgColor
-  border-radius: 20px
-  display: flex
-  align-items: center
-  font-weight: 700
-  &__delta
-    position: absolute
-    width: 78%
-    height: 1px
-    bottom: -5px
-    left: 11%
-    display: flex
-    &_like
-      transition: 1s
-      border-top: 1px rgba(255, 255, 255, 0.87) solid
-    &_dislike
-      transition: 1s
-      border-top: 1px rgba(255, 255, 255, 0.3) solid
-  &__like
-    display: flex
-    align-items: center
-    gap: .3em
-    padding: .5em 1em
-    &_activ
-      font-variation-settings: 'FILL' 1, 'wght' 200
-  &__dislike
-    padding: .5em 1em
-    gap: .3em
-    display: flex
-    align-items: center
-    &_activ
-      font-variation-settings: 'FILL' 1, 'wght' 200
 .video-wrapper
   flex: 2.3
   &__sup-text
