@@ -1,8 +1,9 @@
 <script setup>
 import { onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
-import { videoGET, CommentGET, CommentPOST } from "@/api/api.js";
+import { videoGET } from "@/api/api.js";
 import SectionVideoAside from "@/components/section/SectionVideoAside.vue";
+import SectionComents from "@/components/section/SectionComents.vue";
 import ComponentUserReact from "@/components/ComponentUserReact.vue";
 import ComponentDescription from "@/components/ComponentDescription.vue";
 
@@ -10,63 +11,17 @@ const API_URL = import.meta.env.VITE_API_URL;
 const arr = ref(null);
 const $route = useRoute();
 const loding = ref(true);
-const authorizedLogin = ref(null);
-const commentSectionInputFocus = ref(false);
-const commentSectionInputFocusFirst = ref(false);
-const commentSectionInputValue = ref("");
-const ButtonDisabled = ref(true);
-const comments = ref({});
 
 async function fetchData() {
-  if (localStorage.getItem("user")) {
-    authorizedLogin.value = localStorage.getItem("user");
-  }
   loding.value = true;
-
   arr.value = await videoGET($route.params.id);
-
   loding.value = false;
-  comments.value = await CommentGET($route.params.id);
 }
 
 onMounted(async () => {
   await fetchData();
 });
-async function commentPost() {
-  const msg = commentSectionInputValue.value;
-  commentSectionInputValue.value = "";
-  const user = localStorage.getItem("user");
-  const psw = localStorage.getItem("pasword");
-
-  const code = await CommentPOST(user, psw, $route.params.id, msg);
-  if (code === 200) {
-    comments.value.unshift({
-      text: msg,
-      user: user,
-    });
-  }
-}
-function commentSectionInputFocusEvent(e) {
-  if (e) {
-    commentSectionInputFocusFirst.value = true;
-    commentSectionInputFocus.value = true;
-  } else {
-    commentSectionInputFocus.value = false;
-  }
-}
-function commentSectionInputValueChange() {
-  if (commentSectionInputValue.value) {
-    ButtonDisabled.value = false;
-  } else {
-    ButtonDisabled.value = true;
-  }
-}
-function commentSectionClear() {
-  commentSectionInputFocusFirst.value = false;
-  commentSectionInputValue.value = "";
-}
 watch(() => $route.params.id, fetchData);
-watch(() => commentSectionInputValue.value, commentSectionInputValueChange);
 </script>
 
 <template>
@@ -88,88 +43,7 @@ watch(() => commentSectionInputValue.value, commentSectionInputValueChange);
         </div>
         <hr />
         <ComponentDescription />
-        <section class="comment-section">
-          <h2 class="comment-section__title">
-            {{ Object.keys(comments).length }} Comments
-          </h2>
-          <div class="comment-section__form-posting">
-            <img
-              :src="`${API_URL}profileImage/${authorizedLogin}`"
-              :alt="`${authorizedLogin}`"
-              class="popup-user-info__ava comment-section__ava"
-            />
-            <form @submit.prevent="commentPost" class="comment-section__form">
-              <input
-                @focusin="commentSectionInputFocusEvent(true)"
-                @focusout="commentSectionInputFocusEvent(false)"
-                v-model="commentSectionInputValue"
-                placeholder="Add a comment..."
-                class="comment-section__input"
-                type="text"
-              />
-              <div class="comment-section__input-sub-line">
-                <div
-                  class="comment-section__input-sub-line_aside"
-                  :class="{
-                    'comment-section__input-sub-line_aside-activ':
-                      commentSectionInputFocus,
-                  }"
-                ></div>
-                <div
-                  class="comment-section__input-sub-line_center"
-                  :class="{
-                    'comment-section__input-sub-line_center-activ':
-                      commentSectionInputFocus,
-                  }"
-                ></div>
-                <div
-                  class="comment-section__input-sub-line_aside"
-                  :class="{
-                    'comment-section__input-sub-line_aside-activ':
-                      commentSectionInputFocus,
-                  }"
-                ></div>
-              </div>
-              <div
-                v-if="commentSectionInputFocusFirst"
-                class="comment-section__button-wrapper"
-              >
-                <input
-                  :disabled="ButtonDisabled"
-                  value="Comment"
-                  class="comment-section__form-button"
-                  :class="{ ButtonDisabled: ButtonDisabled }"
-                  type="submit"
-                />
-                <button
-                  @click="commentSectionClear()"
-                  class="comment-section__button-clear"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
-          <ul class="comment-section__users-comments users-comments">
-            <li
-              v-for="(comment, key) in comments"
-              :key="key"
-              class="users-comments__item"
-            >
-              <img
-                :src="`${API_URL}profileImage/${comment.user}`"
-                :alt="`${comment.user}`"
-                class="users-comments__ava"
-              />
-              <div class="users-comments__coment-wrapper">
-                <div class="users-comments__user-name">@{{ comment.user }}</div>
-                <div class="users-comments__coment">
-                  {{ comment.text }}
-                </div>
-              </div>
-            </li>
-          </ul>
-        </section>
+        <SectionComents />
       </div>
       <SectionVideoAside />
     </section>
@@ -177,79 +51,6 @@ watch(() => commentSectionInputValue.value, commentSectionInputValueChange);
 </template>
 
 <style lang="sass" scoped>
-.users-comments
-  margin-top: 2em
-  display: flex
-  flex-direction: column
-  gap: 1em
-  &__coment-wrapper
-    display: flex
-    flex-direction: column
-    gap: 6px
-  &__user-name
-    font-weight: 500
-    font-size: 13px
-  &__item
-    display: flex
-    gap: 1em
-  &__ava
-    width: 40px
-    height: 40px
-    border-radius: 40px
-    object-fit: cover
-
-.comment-section
-  &__title
-    margin: 1em 0
-  &__form-posting
-    display: flex
-    gap: 1em
-  &__input
-    margin-bottom: 5px
-    width: 100%
-    background: none
-  &__form
-    width: 100%
-  &__form-button
-    cursor: pointer
-    font-weight: 500
-    color: #000
-    background-color: #3ea6ff
-    border-radius: 20px
-    padding: 0 14px
-    height: 36px
-  &__button-clear
-    font-weight: 500
-    color: $textColor
-    background: none
-    border-radius: 20px
-    padding: 0 14px
-    height: 36px
-  &__button-clear:hover
-    background-color: $subBgColor
-  &__button-wrapper
-    margin-top: 1em
-    display: flex
-    flex-direction: row-reverse
-    justify-content: end
-    gap: 1em
-  &__input-sub-line
-    display: flex
-    justify-content: center
-    &_center
-      flex: 0
-      border-top: 1px $textColor solid
-      transition: .5s
-    &_center-activ
-      flex: 1
-    &_aside
-      flex: 1
-      border-top: 1px $subBgColor solid
-      transition: .5s
-    &_aside-activ
-      flex: 0
-      border-top: 1px $subBgColor solid
-      transition: .5s
 .video-wrapper
   flex: 2.3
   &__sup-text
@@ -258,18 +59,6 @@ watch(() => commentSectionInputValue.value, commentSectionInputValueChange);
     justify-content: space-between
     align-items: flex-start
     margin: .5em 2em 0 0
-  &__sub-text
-    line-height: 1.4em
-  &__description
-    transition: .1s
-    padding: 1em
-    background-color: $subBgColor
-    border-radius: 10px
-    cursor: default
-    &_p
-      height: 90px
-      overflow: hidden
-      text-overflow: ellipsis
 .video
   width: 100%
   max-height: 70vh
@@ -282,9 +71,4 @@ watch(() => commentSectionInputValue.value, commentSectionInputValueChange);
 .main-video-section
   display: flex
   gap: 1em
-
-.ButtonDisabled
-  background-color: $subBgColor
-  color: rgba(255, 255, 255, 0.5)
-  cursor: default
 </style>
