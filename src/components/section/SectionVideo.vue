@@ -31,6 +31,24 @@ onMounted(async () => {
   </section>
 </template>
 
-<style lang="sass">
-@import "@/assets/css/style.sass"
+<style lang="sass" scoped>
+.video-section
+  display: flex
+  gap: 1em
+  flex-wrap: wrap
+  &__item
+    width: 322px
+    height: 175px
+    border-radius: 10px
+    object-fit: cover
+  &__item-wrapper
+    border-radius: 10px
+  &__item-name
+    width: 322px
+    white-space: nowrap
+    font-size: 1em
+    font-weight: 500
+    overflow: hidden
+    text-overflow: ellipsis
+
 </style>

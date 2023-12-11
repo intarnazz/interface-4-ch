@@ -3,6 +3,7 @@ import { computed, onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { videoGET, CommentGET, likeGET, CommentPOST } from "@/api/api.js";
 import SectionVideoAside from "@/components/section/SectionVideoAside.vue";
+import ComponentUserReact from "@/components/ComponentUserReact.vue";
 
 const API_URL = import.meta.env.VITE_API_URL;
 const arr = ref(null);
@@ -152,38 +153,7 @@ watch(() => commentSectionInputValue.value, commentSectionInputValueChange);
           <h2 class="video__name">
             {{ arr[$route.params.id].name }}
           </h2>
-          <div class="video__reaction reaction">
-            <div @click="likeClick()" class="reaction__like">
-              <span
-                class="material-symbols-outlined"
-                :class="{ reaction__like_activ: likeClickActiv }"
-              >
-                thumb_up </span
-              >{{ likeFix }}
-            </div>
-            <div
-              style="
-                border-left: 1px rgba(255, 255, 255, 0.4) solid;
-                height: 1.5em;
-              "
-              class="line"
-            ></div>
-            <div @click="dislikeClick()" class="reaction__dislike">
-              <span
-                class="material-symbols-outlined"
-                :class="{ reaction__dislike_activ: dislikeClickActiv }"
-              >
-                thumb_down </span
-              >{{ dislikeFix }}
-            </div>
-            <div class="reaction__delta">
-              <div :style="`flex: ${like};`" class="reaction__delta_like"></div>
-              <div
-                :style="`flex: ${dislike};`"
-                class="reaction__delta_dislike"
-              ></div>
-            </div>
-          </div>
+          <ComponentUserReact :id="$route.params.id" />
         </div>
         <hr />
         <div class="video-wrapper__sub-text">
