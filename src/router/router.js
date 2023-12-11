@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Home from "@/page/PageHome.vue";
-import Video from "@/page/PageVideo.vue"
+import ExpandedVideo from "@/page/PageExpandedVideo.vue"
 const routes = [
   {
     path: "/",
@@ -9,8 +9,8 @@ const routes = [
   },
   {
     path: "/video/:id",
-    name: "Video",
-    component: Video,
+    name: "ExpandedVideo",
+    component: ExpandedVideo,
   },
 ];
 

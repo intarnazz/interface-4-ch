@@ -2,10 +2,10 @@
 import { computed, onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { videoGET, CommentGET, likeGET, CommentPOST } from "@/api/api.js";
+import SectionVideoAside from "@/components/section/SectionVideoAside.vue";
 
 const API_URL = import.meta.env.VITE_API_URL;
 const arr = ref(null);
-const arrAside = ref(null);
 const $route = useRoute();
 const loding = ref(true);
 const like = ref(0);
@@ -32,8 +32,6 @@ async function fetchData() {
 
   like.value = arr.value[$route.params.id].like ?? 0;
   dislike.value = arr.value[$route.params.id].dislike ?? 0;
-
-  arrAside.value = await videoGET();
 
   loding.value = false;
   comments.value = await CommentGET($route.params.id);
@@ -305,24 +303,7 @@ watch(() => commentSectionInputValue.value, commentSectionInputValueChange);
           </ul>
         </section>
       </div>
-      <section class="video-section">
-        <template v-for="(item, id) in arrAside" :key="id">
-          <RouterLink
-            v-if="id !== $route.params.id"
-            :to="{ name: 'Video', params: { id: id } }"
-            class="video-section__item-wrapper"
-          >
-            <video
-              :src="`${API_URL}image/${id}?tred=video_api`"
-              class="video-section__item"
-              preload="metadata"
-            ></video>
-            <p class="video-section__item-name">
-              {{ item.name }}
-            </p>
-          </RouterLink>
-        </template>
-      </section>
+      <SectionVideoAside />
     </section>
   </template>
 </template>
@@ -472,25 +453,6 @@ watch(() => commentSectionInputValue.value, commentSectionInputValueChange);
     line-height: normal
     font-size: 1.4em
     font-weight: 500
-
-.video-section
-  flex: 1
-  flex-direction: column
-  &__item-wrapper
-    display: flex
-    gap: 1em
-    border-radius: 10px
-  &__item-name
-    height: 94px
-    width: auto
-    font-size: 14px
-    font-weight: 400
-    line-height: 1.4em
-    flex: 1
-    white-space: normal
-  &__item
-    width: 168px
-    height: 94px
 
 .main-video-section
   display: flex

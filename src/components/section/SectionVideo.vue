@@ -17,7 +17,7 @@ onMounted(async () => {
       :key="id"
       class="video-section__item-wrapper"
     >
-      <RouterLink :to="{ name: 'Video', params: { id: id } }">
+      <RouterLink :to="{ name: 'ExpandedVideo', params: { id: id } }">
         <video
           :src="`${API_URL}image/${id}?tred=video_api`"
           class="video-section__item"
