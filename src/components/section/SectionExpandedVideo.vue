@@ -31,7 +31,7 @@ onMounted(async () => {
 const videoName = computed(() => {
   return arr.value[$route.params.id]
     ? arr.value[$route.params.id].name
-    : "Server Not Found";
+    : "Video Not Found";
 });
 
 watch(() => $route.params.id, fetchData);

@@ -12,15 +12,20 @@ const InputFocusFirst = ref(false);
 const InputValue = ref("");
 const ButtonDisabled = ref(true);
 const comments = ref({});
+const errorServerNotFound = ref(false);
 
 async function fetchData() {
-  if (localStorage.getItem("user")) {
-    authorizedLogin.value = localStorage.getItem("user");
-  }
   loding.value = true;
-
-  loding.value = false;
-  comments.value = await CommentGET($route.params.id);
+  try {
+    if (localStorage.getItem("user")) {
+      authorizedLogin.value = localStorage.getItem("user");
+    }
+    comments.value = await CommentGET($route.params.id);
+    loding.value = false;
+  } catch (e) {
+    errorServerNotFound.value = true;
+    loding.value = false;
+  }
 }
 
 onMounted(async () => {
@@ -67,77 +72,79 @@ watch(() => InputValue.value, InputValueChange);
     <h2 class="comment-section__title">
       {{ Object.keys(comments).length }} Comments
     </h2>
-    <div class="comment-section__form-posting">
-      <img
-        :src="`${API_URL}profileImage/${authorizedLogin}`"
-        :alt="`${authorizedLogin}`"
-        class="popup-user-info__ava comment-section__ava"
-      />
-      <form @submit.prevent="commentPost" class="comment-section__form">
-        <input
-          @focusin="InputFocusEvent(true)"
-          @focusout="InputFocusEvent(false)"
-          v-model="InputValue"
-          placeholder="Add a comment..."
-          class="comment-section__input"
-          type="text"
-        />
-        <div class="comment-section__input-sub-line">
-          <div
-            class="comment-section__input-sub-line_aside"
-            :class="{
-              'comment-section__input-sub-line_aside-activ': InputFocus,
-            }"
-          ></div>
-          <div
-            class="comment-section__input-sub-line_center"
-            :class="{
-              'comment-section__input-sub-line_center-activ': InputFocus,
-            }"
-          ></div>
-          <div
-            class="comment-section__input-sub-line_aside"
-            :class="{
-              'comment-section__input-sub-line_aside-activ': InputFocus,
-            }"
-          ></div>
-        </div>
-        <div v-if="InputFocusFirst" class="comment-section__button-wrapper">
-          <input
-            :disabled="ButtonDisabled"
-            value="Comment"
-            class="comment-section__form-button"
-            :class="{ ButtonDisabled: ButtonDisabled }"
-            type="submit"
-          />
-          <button
-            @click="commentSectionClear()"
-            class="comment-section__button-clear"
-          >
-            Cancel
-          </button>
-        </div>
-      </form>
-    </div>
-    <ul class="comment-section__users-comments users-comments">
-      <li
-        v-for="(comment, key) in comments"
-        :key="key"
-        class="users-comments__item"
-      >
+    <template v-if="!loding">
+      <div v-if="!errorServerNotFound" class="comment-section__form-posting">
         <img
-          :src="`${API_URL}profileImage/${comment.user}`"
-          :alt="`${comment.user}`"
-          class="users-comments__ava"
+          :src="`${API_URL}profileImage/${authorizedLogin}`"
+          :alt="`${authorizedLogin}`"
+          class="popup-user-info__ava comment-section__ava"
         />
-        <div class="users-comments__coment-wrapper">
-          <div class="users-comments__user-name">@{{ comment.user }}</div>
-          <div class="users-comments__coment">
-            {{ comment.text }}
+        <form @submit.prevent="commentPost" class="comment-section__form">
+          <input
+            @focusin="InputFocusEvent(true)"
+            @focusout="InputFocusEvent(false)"
+            v-model="InputValue"
+            placeholder="Add a comment..."
+            class="comment-section__input"
+            type="text"
+          />
+          <div class="comment-section__input-sub-line">
+            <div
+              class="comment-section__input-sub-line_aside"
+              :class="{
+                'comment-section__input-sub-line_aside-activ': InputFocus,
+              }"
+            ></div>
+            <div
+              class="comment-section__input-sub-line_center"
+              :class="{
+                'comment-section__input-sub-line_center-activ': InputFocus,
+              }"
+            ></div>
+            <div
+              class="comment-section__input-sub-line_aside"
+              :class="{
+                'comment-section__input-sub-line_aside-activ': InputFocus,
+              }"
+            ></div>
           </div>
-        </div>
-      </li>
-    </ul>
+          <div v-if="InputFocusFirst" class="comment-section__button-wrapper">
+            <input
+              :disabled="ButtonDisabled"
+              value="Comment"
+              class="comment-section__form-button"
+              :class="{ ButtonDisabled: ButtonDisabled }"
+              type="submit"
+            />
+            <button
+              @click="commentSectionClear()"
+              class="comment-section__button-clear"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+      <ul class="comment-section__users-comments users-comments">
+        <li
+          v-for="(comment, key) in comments"
+          :key="key"
+          class="users-comments__item"
+        >
+          <img
+            :src="`${API_URL}profileImage/${comment.user}`"
+            :alt="`${comment.user}`"
+            class="users-comments__ava"
+          />
+          <div class="users-comments__coment-wrapper">
+            <div class="users-comments__user-name">@{{ comment.user }}</div>
+            <div class="users-comments__coment">
+              {{ comment.text }}
+            </div>
+          </div>
+        </li>
+      </ul>
+    </template>
   </section>
 </template>
 
