@@ -6,9 +6,17 @@ import { videoGET } from "@/api/api.js";
 const API_URL = import.meta.env.VITE_API_URL;
 const arrAside = ref(null);
 const $route = useRoute();
+const loding = ref(true);
+const errorServerNotFound = ref(false);
 
 async function fetchData() {
-  arrAside.value = await videoGET();
+  try {
+    loding.value = true;
+    arrAside.value = await videoGET();
+    loding.value = false;
+  } catch (e) {
+    errorServerNotFound.value = true;
+  }
 }
 
 onMounted(async () => {
@@ -17,28 +25,35 @@ onMounted(async () => {
 </script>
 
 <template>
-  <!-- <n-space vertical>
-    <n-skeleton height="40px" width="33%" />
-    <n-skeleton height="40px" width="66%" :sharp="false" />
-    <n-skeleton height="40px" round />
-    <n-skeleton height="40px" circle />
-  </n-space> -->
   <section class="video-section">
-    <template v-for="(item, id) in arrAside" :key="id">
-      <RouterLink
-        v-if="id !== $route.params.id"
-        :to="{ name: 'ExpandedVideo', params: { id: id } }"
-        class="video-section__item-wrapper"
-      >
-        <video
-          :src="`${API_URL}image/${id}?tred=video_api`"
+    <template v-if="!loding">
+      <template v-for="(item, id) in arrAside" :key="id">
+        <RouterLink
+          v-if="id !== $route.params.id"
+          :to="{ name: 'ExpandedVideo', params: { id: id } }"
+          class="video-section__item-wrapper"
+        >
+          <video
+            :src="`${API_URL}image/${id}?tred=video_api`"
+            class="video-section__item"
+            preload="metadata"
+          ></video>
+          <p class="video-section__item-name">
+            {{ item.name }}
+          </p>
+        </RouterLink>
+      </template>
+    </template>
+    <template v-else>
+      <n-space v-for="key in 10" :key="key" vertical>
+        <n-skeleton
+          style="
+            --n-color-start: rgba(255, 255, 255, 0.12);
+            --n-color-end: rgba(255, 255, 255, 0.18);
+          "
           class="video-section__item"
-          preload="metadata"
-        ></video>
-        <p class="video-section__item-name">
-          {{ item.name }}
-        </p>
-      </RouterLink>
+        />
+      </n-space>
     </template>
   </section>
 </template>
@@ -67,4 +82,5 @@ onMounted(async () => {
     height: 94px
     object-fit: cover
     border-radius: 10px
+    background-color: $subBgColor
 </style>

@@ -63,7 +63,7 @@ function logout() {
       <div class="user__ava-wrapper">
         <img
           :src="`${API_URL}profileImage/${authorizedLogin}`"
-          :alt="`${authorizedLogin}`"
+          alt=""
           class="user__ava"
         />
       </div>
@@ -75,7 +75,7 @@ function logout() {
         <div class="popup-user-info__header">
           <img
             :src="`${API_URL}profileImage/${authorizedLogin}`"
-            :alt="`${authorizedLogin}`"
+            alt=""
             class="popup-user-info__ava"
           />
           {{ authorizedLogin }}

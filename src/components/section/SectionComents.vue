@@ -76,7 +76,7 @@ watch(() => InputValue.value, InputValueChange);
       <div v-if="!errorServerNotFound" class="comment-section__form-posting">
         <img
           :src="`${API_URL}profileImage/${authorizedLogin}`"
-          :alt="`${authorizedLogin}`"
+          alt=""
           class="popup-user-info__ava comment-section__ava"
         />
         <form @submit.prevent="commentPost" class="comment-section__form">
@@ -133,7 +133,7 @@ watch(() => InputValue.value, InputValueChange);
         >
           <img
             :src="`${API_URL}profileImage/${comment.user}`"
-            :alt="`${comment.user}`"
+            alt=""
             class="users-comments__ava"
           />
           <div class="users-comments__coment-wrapper">
