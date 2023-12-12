@@ -5,5 +5,8 @@ export async function CommentGET(id) {
     .then((response) => response.json())
     .then((json) => {
       return Object.values(json);
+    })
+    .catch((e) => {
+      throw e;
     });
 }

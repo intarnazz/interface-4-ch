@@ -16,5 +16,8 @@ export async function CommentPOST(user, psw, id, msg) {
     .then((response) => response.json())
     .then((json) => {
       return json.code;
+    })
+    .catch((e) => {
+      throw e;
     });
 }

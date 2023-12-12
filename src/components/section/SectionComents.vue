@@ -86,29 +86,23 @@ watch(() => InputValue.value, InputValueChange);
           <div
             class="comment-section__input-sub-line_aside"
             :class="{
-              'comment-section__input-sub-line_aside-activ':
-                InputFocus,
+              'comment-section__input-sub-line_aside-activ': InputFocus,
             }"
           ></div>
           <div
             class="comment-section__input-sub-line_center"
             :class="{
-              'comment-section__input-sub-line_center-activ':
-                InputFocus,
+              'comment-section__input-sub-line_center-activ': InputFocus,
             }"
           ></div>
           <div
             class="comment-section__input-sub-line_aside"
             :class="{
-              'comment-section__input-sub-line_aside-activ':
-                InputFocus,
+              'comment-section__input-sub-line_aside-activ': InputFocus,
             }"
           ></div>
         </div>
-        <div
-          v-if="InputFocusFirst"
-          class="comment-section__button-wrapper"
-        >
+        <div v-if="InputFocusFirst" class="comment-section__button-wrapper">
           <input
             :disabled="ButtonDisabled"
             value="Comment"

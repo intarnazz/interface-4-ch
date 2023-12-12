@@ -4,30 +4,44 @@ import { videoGET } from "@/api/api.js";
 
 const API_URL = import.meta.env.VITE_API_URL;
 const arr = ref(null);
+const errorServerNotFound = ref(false);
 
 onMounted(async () => {
-  arr.value = await videoGET();
+  try {
+    arr.value = await videoGET();
+  } catch (e) {
+    errorServerNotFound.value = true;
+  }
 });
 </script>
 
 <template>
   <section class="video-section">
-    <div
-      v-for="(item, id) in arr"
-      :key="id"
-      class="video-section__item-wrapper"
-    >
-      <RouterLink :to="{ name: 'ExpandedVideo', params: { id: id } }">
-        <video
-          :src="`${API_URL}image/${id}?tred=video_api`"
-          class="video-section__item"
-          preload="metadata"
-        ></video>
-        <p class="video-section__item-name">
-          {{ item.name }}
-        </p>
-      </RouterLink>
+    <div v-if="errorServerNotFound" class="errorServerNotFound">
+      <img
+        src="@/assets/img/gif/eto-anime-girl.gif"
+        alt="errorServerNotFound"
+      />
+      <h2>Server Not Found :(</h2>
     </div>
+    <template v-else>
+      <div
+        v-for="(item, id) in arr"
+        :key="id"
+        class="video-section__item-wrapper"
+      >
+        <RouterLink :to="{ name: 'ExpandedVideo', params: { id: id } }">
+          <video
+            :src="`${API_URL}image/${id}?tred=video_api`"
+            class="video-section__item"
+            preload="metadata"
+          ></video>
+          <p class="video-section__item-name">
+            {{ item.name }}
+          </p>
+        </RouterLink>
+      </div>
+    </template>
   </section>
 </template>
 
@@ -50,5 +64,4 @@ onMounted(async () => {
     font-weight: 500
     overflow: hidden
     text-overflow: ellipsis
-
 </style>

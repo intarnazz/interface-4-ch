@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { videoGET } from "@/api/api.js";
 import SectionVideoAside from "@/components/section/SectionVideoAside.vue";
@@ -8,19 +8,32 @@ import ComponentUserReact from "@/components/ComponentUserReact.vue";
 import ComponentDescription from "@/components/ComponentDescription.vue";
 
 const API_URL = import.meta.env.VITE_API_URL;
-const arr = ref(null);
+const arr = ref([]);
 const $route = useRoute();
 const loding = ref(true);
+const errorServerNotFound = ref(false);
 
 async function fetchData() {
-  loding.value = true;
-  arr.value = await videoGET($route.params.id);
-  loding.value = false;
+  try {
+    loding.value = true;
+    arr.value = await videoGET($route.params.id);
+    loding.value = false;
+  } catch (e) {
+    errorServerNotFound.value = true;
+    loding.value = false;
+  }
 }
 
 onMounted(async () => {
   await fetchData();
 });
+
+const videoName = computed(() => {
+  return arr.value[$route.params.id]
+    ? arr.value[$route.params.id].name
+    : "Server Not Found";
+});
+
 watch(() => $route.params.id, fetchData);
 </script>
 
@@ -28,7 +41,14 @@ watch(() => $route.params.id, fetchData);
   <template v-if="!loding">
     <section class="main-video-section">
       <div class="video-wrapper">
+        <div v-if="errorServerNotFound" class="errorServerNotFound">
+          <img
+            src="@/assets/img/gif/eto-anime-girl.gif"
+            alt="errorServerNotFound"
+          />
+        </div>
         <video
+          v-else
           :src="`${API_URL}image/${$route.params.id}?tred=video_api`"
           class="video"
           controls
@@ -37,7 +57,7 @@ watch(() => $route.params.id, fetchData);
         ></video>
         <div class="video-wrapper__sup-text">
           <h2 class="video__name">
-            {{ arr[$route.params.id].name }}
+            {{ videoName }}
           </h2>
           <ComponentUserReact />
         </div>

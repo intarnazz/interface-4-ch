@@ -14,5 +14,8 @@ export async function loginPOST(login, pasword) {
     .then((response) => response.json())
     .then((json) => {
       return json.code;
+    })
+    .catch((e) => {
+      throw e;
     });
 }

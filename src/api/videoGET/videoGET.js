@@ -8,5 +8,8 @@ export async function videoGET(id = "") {
     .then((response) => response.json())
     .then((json) => {
       return json.data;
+    })
+    .catch((e) => {
+      throw e;
     });
 }
