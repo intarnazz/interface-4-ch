@@ -3,6 +3,8 @@ import { onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { CommentGET, CommentPOST } from "@/api/api.js";
 
+const props = defineProps(['logOutEvent'])
+
 const API_URL = import.meta.env.VITE_API_URL;
 const $route = useRoute();
 const loding = ref(true);
@@ -65,6 +67,7 @@ function commentSectionClear() {
   InputValue.value = "";
 }
 watch(() => InputValue.value, InputValueChange);
+watch(() => props.logOutEvent, fetchData);
 </script>
 
 <template>
@@ -73,7 +76,7 @@ watch(() => InputValue.value, InputValueChange);
       {{ Object.keys(comments).length }} Comments
     </h2>
     <template v-if="!loding">
-      <div v-if="!errorServerNotFound" class="comment-section__form-posting">
+      <div v-if="!errorServerNotFound && !props.logOutEvent" class="comment-section__form-posting">
         <img
           :src="`${API_URL}profileImage/${authorizedLogin}`"
           alt=""

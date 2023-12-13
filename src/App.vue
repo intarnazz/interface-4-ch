@@ -8,10 +8,16 @@ const pasword = ref("");
 const authorizedLogin = ref(null);
 const loginFormOpen = ref(false);
 const userInfoOpen = ref(false);
+const logOutEvent = ref(true);
+const popup = ref(null);
+const popupButton = ref(null);
 
 onMounted(async () => {
+  document.addEventListener("click", userInfoColseEvent);
+
   if (localStorage.getItem("user")) {
     authorizedLogin.value = localStorage.getItem("user");
+    logOutEvent.value = false;
     console.log(authorizedLogin.value);
   }
 });
@@ -23,6 +29,7 @@ async function submitForm() {
     localStorage.setItem("user", login.value);
     localStorage.setItem("pasword", pasword.value);
     loginFormOpen.value = false;
+    logOutEvent.value = false;
   }
 }
 
@@ -35,12 +42,15 @@ function popupColseEvent() {
 function userInfoOpenEvent() {
   userInfoOpen.value = true;
 }
-function userInfoColseEvent() {
-  userInfoOpen.value = false;
+function userInfoColseEvent(event) {
+  if (popup.value && !popup.value.contains(event.target)) {
+    userInfoOpen.value = false;
+  }
 }
 function logout() {
   authorizedLogin.value = null;
   userInfoOpen.value = false;
+  logOutEvent.value = true;
   localStorage.removeItem("user");
   localStorage.removeItem("pasword");
 }
@@ -58,7 +68,12 @@ function logout() {
     >
       <span class="material-symbols-outlined"> person </span> Войти
     </button>
-    <div v-else @click="userInfoOpenEvent()" class="header__user user">
+    <div
+      v-else
+      ref="popup"
+      @click="userInfoOpenEvent()"
+      class="header__user user"
+    >
       {{ authorizedLogin }}
       <div class="user__ava-wrapper">
         <img
@@ -68,7 +83,6 @@ function logout() {
         />
       </div>
       <div
-        @click.stop=""
         class="popup popup-user-info"
         :class="{ popup__close: !userInfoOpen }"
       >
@@ -113,13 +127,7 @@ function logout() {
       </p>
     </form>
   </div>
-  <RouterView />
-  <div
-    v-if="userInfoOpen"
-    @click="userInfoColseEvent()"
-    style="pointer-events: auto"
-    class="popup-user-info__bg"
-  ></div>
+  <RouterView :logOutEvent="logOutEvent" />
 </template>
 
 <style lang="sass">

@@ -7,6 +7,8 @@ import SectionComents from "@/components/section/SectionComents.vue";
 import ComponentUserReact from "@/components/ComponentUserReact.vue";
 import ComponentDescription from "@/components/ComponentDescription.vue";
 
+const props = defineProps(['logOutEvent'])
+
 const API_URL = import.meta.env.VITE_API_URL;
 const arr = ref([]);
 const $route = useRoute();
@@ -63,7 +65,7 @@ watch(() => $route.params.id, fetchData);
         </div>
         <hr />
         <ComponentDescription />
-        <SectionComents />
+        <SectionComents :logOutEvent="props.logOutEvent" />
       </div>
       <SectionVideoAside />
     </section>
