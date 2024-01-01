@@ -7,7 +7,7 @@ import SectionComents from "@/components/section/SectionComents.vue";
 import ComponentUserReact from "@/components/ComponentUserReact.vue";
 import ComponentDescription from "@/components/ComponentDescription.vue";
 
-const props = defineProps(['logOutEvent'])
+const props = defineProps(["logOutEvent"]);
 
 const API_URL = import.meta.env.VITE_API_URL;
 const arr = ref([]);
@@ -43,29 +43,31 @@ watch(() => $route.params.id, fetchData);
   <template v-if="!loding">
     <section class="main-video-section">
       <div class="video-wrapper">
-        <div v-if="errorServerNotFound" class="errorServerNotFound">
-          <img
-            src="@/assets/img/gif/eto-anime-girl.gif"
-            alt="errorServerNotFound"
-          />
-        </div>
-        <video
-          v-else
-          :src="`${API_URL}image/${$route.params.id}?tred=video_api`"
-          class="video"
-          controls
-          autoplay
-          loop="-1"
-        ></video>
-        <div class="video-wrapper__sup-text">
-          <h2 class="video__name">
-            {{ videoName }}
-          </h2>
-          <ComponentUserReact />
-        </div>
-        <hr />
-        <ComponentDescription />
-        <SectionComents :logOutEvent="props.logOutEvent" />
+        <main class="main">
+          <div v-if="errorServerNotFound" class="errorServerNotFound">
+            <img
+              src="@/assets/img/gif/eto-anime-girl.gif"
+              alt="errorServerNotFound"
+            />
+          </div>
+          <video
+            v-else
+            :src="`${API_URL}image/${$route.params.id}?tred=video_api`"
+            class="video"
+            controls
+            autoplay
+            loop="-1"
+          ></video>
+          <div class="video-wrapper__sup-text">
+            <h2 class="video__name">
+              {{ videoName }}
+            </h2>
+            <ComponentUserReact />
+          </div>
+          <hr />
+          <ComponentDescription />
+          <SectionComents :logOutEvent="props.logOutEvent" />
+        </main>
       </div>
       <SectionVideoAside />
     </section>

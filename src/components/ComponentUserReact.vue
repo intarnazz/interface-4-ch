@@ -23,11 +23,17 @@ onMounted(async () => {
 });
 
 const likeFix = computed(() => {
-  return like.value >= 1000 ? (like.value / 1000).toFixed(1) + "K" : like.value;
+  return like.value >= 1000000000
+    ? (like.value / 1000000000).toFixed(1) + "M"
+    : like.value >= 1000
+    ? (like.value / 1000).toFixed(1) + "K"
+    : like.value;
 });
 
 const dislikeFix = computed(() => {
-  return dislike.value >= 1000
+  return dislike.value >= 1000000000
+    ? (dislike.value / 1000000000).toFixed(1) + "M"
+    : dislike.value >= 1000
     ? (dislike.value / 1000).toFixed(1) + "K"
     : dislike.value;
 });
