@@ -9,9 +9,9 @@ setInterval(() => {
   for (let i = 0; i < snowflakeArr.value.length; i++) {
     snowflakeArr.value[i].pos_y += snowflakeArr.value[i].size / 20;
     if (snowflakeArr.value[i].pos_delta >= snowflakeArr.value[i].size) {
-      snowflakeArr.value[i].pos_way = snowflakeArr.value[i].pos_way * -1
+      snowflakeArr.value[i].pos_way = snowflakeArr.value[i].pos_way * -1;
     } else if (snowflakeArr.value[i].pos_delta <= -5) {
-      snowflakeArr.value[i].pos_way = snowflakeArr.value[i].pos_way * -1
+      snowflakeArr.value[i].pos_way = snowflakeArr.value[i].pos_way * -1;
     }
     snowflakeArr.value[i].pos_delta =
       snowflakeArr.value[i].pos_delta +
@@ -31,7 +31,7 @@ setInterval(() => {
     loop = 0;
   }
   for (let i = 0; i < snowflakeArr.value.length; i++) {
-    if (snowflakeArr.value[i].pos_y >= window.innerHeight) {
+    if (snowflakeArr.value[i].pos_y >= window.innerHeight + 10) {
       snowflakeArr.value.splice(i, 1);
       i--;
     }
@@ -63,4 +63,5 @@ setInterval(() => {
   background-color: #4694ad
   border-radius: 10px
   margin: -10px
+  pointer-events: none
 </style>

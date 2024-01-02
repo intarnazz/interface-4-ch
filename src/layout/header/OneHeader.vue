@@ -13,7 +13,6 @@ const popup = ref(null);
 
 onMounted(async () => {
   document.addEventListener("click", userInfoColseEvent);
-
   if (localStorage.getItem("user")) {
     authorizedLogin.value = localStorage.getItem("user");
     logOutEvent.value = false;
