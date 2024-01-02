@@ -3,7 +3,7 @@ import { onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { CommentGET, CommentPOST } from "@/api/api.js";
 
-const props = defineProps(['logOutEvent'])
+const props = defineProps(["logOutEvent"]);
 
 const API_URL = import.meta.env.VITE_API_URL;
 const $route = useRoute();
@@ -76,11 +76,14 @@ watch(() => props.logOutEvent, fetchData);
       {{ Object.keys(comments).length }} Comments
     </h2>
     <template v-if="!loding">
-      <div v-if="!errorServerNotFound && !props.logOutEvent" class="comment-section__form-posting">
+      <div
+        v-if="!errorServerNotFound && !props.logOutEvent"
+        class="comment-section__form-posting"
+      >
         <img
           :src="`${API_URL}profileImage/${authorizedLogin}`"
           alt=""
-          class="popup-user-info__ava comment-section__ava"
+          class="comment-section__ava ava"
         />
         <form @submit.prevent="commentPost" class="comment-section__form">
           <input
@@ -137,7 +140,7 @@ watch(() => props.logOutEvent, fetchData);
           <img
             :src="`${API_URL}profileImage/${comment.user}`"
             alt=""
-            class="users-comments__ava"
+            class="users-comments__ava ava"
           />
           <div class="users-comments__coment-wrapper">
             <div class="users-comments__user-name">@{{ comment.user }}</div>
@@ -152,6 +155,11 @@ watch(() => props.logOutEvent, fetchData);
 </template>
 
 <style lang="sass" scoped>
+.ava
+  width: 40px
+  height: 40px
+  border-radius: 40px
+  object-fit: cover
 .users-comments
   margin-top: 2em
   display: flex
@@ -167,12 +175,6 @@ watch(() => props.logOutEvent, fetchData);
   &__item
     display: flex
     gap: 1em
-  &__ava
-    width: 40px
-    height: 40px
-    border-radius: 40px
-    object-fit: cover
-
 .comment-section
   &__title
     margin: 1em 0
@@ -184,7 +186,7 @@ watch(() => props.logOutEvent, fetchData);
     width: 100%
     background: none
   &__form
-    width: 100%
+    flex: 1
   &__form-button
     cursor: pointer
     font-weight: 500

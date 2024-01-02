@@ -28,6 +28,17 @@ body
   background-color: $subBgColor
   border-radius: 6px
 
+input:-webkit-autofill
+  -webkit-box-shadow: 0 0 0 1000px $formPost inset !important
+  color: #fff
+
+input:-moz-autofill
+  box-shadow: 0 0 0 1000px $formPost inset !important
+  color: #fff
+
+input:-webkit-autofill
+  -webkit-text-fill-color: #fff !important
+
 input
   color: $textColor
   border: none

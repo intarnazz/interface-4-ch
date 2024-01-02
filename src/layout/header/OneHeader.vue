@@ -1,48 +1,46 @@
 <script setup>
 import { onMounted, ref } from "vue";
-import { loginPOST } from "@/api/api.js";
+import ComponentsFormAutorisation from "@/components/ComponentsFormAutorisation.vue";
 
 const API_URL = import.meta.env.VITE_API_URL;
-const login = ref("");
-const pasword = ref("");
 const authorizedLogin = ref(null);
 const loginFormOpen = ref(false);
 const userInfoOpen = ref(false);
 const logOutEvent = ref(true);
 const popup = ref(null);
 
-onMounted(async () => {
-  document.addEventListener("click", userInfoColseEvent);
+function getUser() {
   if (localStorage.getItem("user")) {
     authorizedLogin.value = localStorage.getItem("user");
     logOutEvent.value = false;
-    console.log(authorizedLogin.value);
   }
+  userInfoOpen.value = false;
+}
+
+onMounted(() => {
+  getUser();
 });
 
-async function submitForm() {
-  const code = await loginPOST(login.value, pasword.value);
-  if (code === 200) {
-    authorizedLogin.value = login.value;
-    localStorage.setItem("user", login.value);
-    localStorage.setItem("pasword", pasword.value);
-    loginFormOpen.value = false;
-    logOutEvent.value = false;
-  }
+function ComponentsFormAutorisationEventColse(colse) {
+  loginFormOpen.value = false;
+  document.removeEventListener("click", userInfoCloseEvent);
+  getUser();
 }
 
 function popupOpenEvent() {
   loginFormOpen.value = true;
 }
-function popupColseEvent() {
-  loginFormOpen.value = false;
-}
 function userInfoOpenEvent() {
-  userInfoOpen.value = true;
+  if (userInfoOpen.value === false) {
+    userInfoOpen.value = true;
+    event.stopPropagation();
+    document.addEventListener("click", userInfoCloseEvent);
+  }
 }
-function userInfoColseEvent(event) {
+function userInfoCloseEvent(event) {
   if (popup.value && !popup.value.contains(event.target)) {
     userInfoOpen.value = false;
+    document.removeEventListener("click", userInfoCloseEvent);
   }
 }
 function logout() {
@@ -66,12 +64,7 @@ function logout() {
     >
       <span class="material-symbols-outlined"> person </span> Войти
     </button>
-    <div
-      v-else
-      ref="popup"
-      @click="userInfoOpenEvent()"
-      class="header__user user"
-    >
+    <div v-else @click="userInfoOpenEvent()" class="header__user user">
       {{ authorizedLogin }}
       <div class="user__ava-wrapper">
         <img
@@ -81,6 +74,7 @@ function logout() {
         />
       </div>
       <div
+        ref="popup"
         class="popup popup-user-info"
         :class="{ popup__close: !userInfoOpen }"
       >
@@ -101,58 +95,13 @@ function logout() {
       </div>
     </div>
   </header>
-  <div
-    @click="popupColseEvent"
-    class="popup popup-login"
-    :class="{ popup__close: !loginFormOpen }"
-  >
-    <form
-      @click.stop
-      @submit.prevent="submitForm"
-      class="popup-login__form"
-      action=""
-    >
-      <p class="popup-login__row">
-        <label for="">Login</label
-        ><input v-model="login" type="text" class="popup-login__input" />
-      </p>
-      <p class="popup-login__row">
-        <label for="">password</label
-        ><input v-model="pasword" type="password" class="popup-login__input" />
-      </p>
-      <p class="popup-login__row">
-        <input type="submit" class="popup-login__input" />
-      </p>
-    </form>
-  </div>
+  <ComponentsFormAutorisation
+    @colse="ComponentsFormAutorisationEventColse"
+    :popupOpen="loginFormOpen"
+  />
 </template>
 
-<style lang="sass">
-.popup-login
-  width: 100vw
-  height: 100dvh
-  position: fixed
-  background-color: rgba(0, 0, 0, 0.9)
-  display: flex
-  align-items: center
-  justify-content: center
-  &__form
-    display: flex
-    flex-direction: column
-    align-items: center
-    justify-content: center
-    width: 500px
-    height: 500px
-    background-color: $formPost
-    border-radius: 20px
-    gap: 20px
-  &__row
-    display: flex
-    justify-content: space-between
-    width: 300px
-  &__input
-    color: #000
-
+<style lang="sass" scoped>
 .popup-user-info
   position: absolute
   top: 0
