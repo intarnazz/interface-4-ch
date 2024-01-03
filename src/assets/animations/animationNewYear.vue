@@ -4,7 +4,7 @@ import { ref } from "vue";
 
 const snowflakeArr = ref([]);
 
-let loop = 0;
+let loop = -2000;
 setInterval(() => {
   for (let i = 0; i < snowflakeArr.value.length; i++) {
     snowflakeArr.value[i].pos_y += snowflakeArr.value[i].size / 20;
