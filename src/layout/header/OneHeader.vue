@@ -92,6 +92,14 @@ function logout() {
         <hr />
         <ul class="popup-user-info__list">
           <li @click="logout()" class="popup-user-info__item">
+            <RouterLink
+              :to="{ name: 'Profile', params: { login: authorizedLogin } }"
+            >
+              <span class="material-symbols-outlined"> person </span>
+              Your porofile
+            </RouterLink>
+          </li>
+          <li @click="logout()" class="popup-user-info__item">
             <span class="material-symbols-outlined"> logout </span> Sing out
           </li>
         </ul>

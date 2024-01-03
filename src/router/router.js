@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Home from "@/page/PageHome.vue";
-import ExpandedVideo from "@/page/PageExpandedVideo.vue"
+import ExpandedVideo from "@/page/PageExpandedVideo.vue";
+import Profile from "@/page/PageProfile.vue";
 const routes = [
   {
     path: "/",
@@ -11,6 +12,11 @@ const routes = [
     path: "/video/:id",
     name: "ExpandedVideo",
     component: ExpandedVideo,
+  },
+  {
+    path: "/Profile/:login",
+    name: "Profile",
+    component: Profile,
   },
 ];
 
