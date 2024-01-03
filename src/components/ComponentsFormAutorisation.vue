@@ -62,7 +62,7 @@ function popupColseEvent() {
   </div>
 </template>
 
-<style lang="sass">
+<style lang="sass" scoped>
 .popup-login
   width: 100vw
   height: 100dvh

@@ -2,17 +2,20 @@
 import { onMounted, ref } from "vue";
 import ComponentsFormAutorisation from "@/components/ComponentsFormAutorisation.vue";
 
+const emit = defineEmits();
+
 const API_URL = import.meta.env.VITE_API_URL;
 const authorizedLogin = ref(null);
 const loginFormOpen = ref(false);
 const userInfoOpen = ref(false);
-const logOutEvent = ref(true);
 const popup = ref(null);
 
 function getUser() {
   if (localStorage.getItem("user")) {
     authorizedLogin.value = localStorage.getItem("user");
-    logOutEvent.value = false;
+    emit("userEvent", false);
+  } else {
+    emit("userEvent", true);
   }
   userInfoOpen.value = false;
 }
@@ -46,9 +49,9 @@ function userInfoCloseEvent(event) {
 function logout() {
   authorizedLogin.value = null;
   userInfoOpen.value = false;
-  logOutEvent.value = true;
   localStorage.removeItem("user");
   localStorage.removeItem("pasword");
+  emit("userEvent", true);
 }
 </script>
 
