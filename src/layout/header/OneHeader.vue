@@ -91,7 +91,7 @@ function logout() {
         </div>
         <hr />
         <ul class="popup-user-info__list">
-          <li @click="logout()" class="popup-user-info__item">
+          <li class="popup-user-info__item">
             <RouterLink
               :to="{ name: 'Profile', params: { login: authorizedLogin } }"
             >
