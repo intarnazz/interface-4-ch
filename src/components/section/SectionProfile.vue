@@ -8,26 +8,37 @@ const API_URL = import.meta.env.VITE_API_URL;
 const $route = useRoute();
 const root = ref(false);
 const login = ref("");
+const password = ref("");
 const subscribers = ref(0);
 const customizeMod = ref(false);
+let cropper;
 
 onMounted(async () => {
   login.value = localStorage.getItem("user");
   if ($route.params.login !== login.value) {
     root.value = false;
   } else {
-    const pasword = localStorage.getItem("pasword");
+    password.value = localStorage.getItem("pasword");
+    console.log(password.value);
     try {
-      const code = await loginPOST(login.value, pasword);
+      const code = await loginPOST(login.value, password.value);
       if (code === 200) {
         root.value = true;
       } else {
         root.value = false;
       }
     } catch (e) {
-      console.log(e);
+      console.log("onMounted - ", e);
     }
   }
+  const image = document.getElementById("image");
+  cropper = new Cropper(image, {
+    aspectRatio: 1 / 1,
+    background: false,
+    viewMode: 1,
+    preview: ".preview",
+    crop(event) {},
+  });
 });
 function customizeModEvent() {
   if (!customizeMod.value) {
@@ -36,6 +47,34 @@ function customizeModEvent() {
     customizeMod.value = false;
   }
 }
+async function avaUpdate() {
+  const croppedCanvas = await cropper.getCroppedCanvas();
+
+  // Преобразование canvas в Blob
+  const blobPromise = new Promise((resolve) => {
+    croppedCanvas.toBlob(resolve, 'image/jpeg'); // Здесь 'image/jpeg' - MIME-тип изображения, можно использовать другие в зависимости от вашего формата
+  });
+
+  const blob = await blobPromise;
+
+  // Создание объекта FormData и добавление файла
+  const formData = new FormData();
+  formData.append('login', login.value);
+  formData.append('password', password.value);
+  formData.append('ava', blob, 'avatar.jpg');  // 'avatar.jpg' - имя файла, можете использовать своё
+
+  // Отправка FormData на сервер
+  return fetch(`${API_URL}profileImageUpdade`, {
+    method: "POST",
+    body: formData,
+  })
+    .then((response) => response.json())
+    .then((json) => json.code)
+    .catch((e) => {
+      throw e;
+    });
+}
+
 </script>
 
 <template>
@@ -82,12 +121,66 @@ function customizeModEvent() {
       </div>
     </main>
   </section>
+  <div class="popup popup-cropper">
+    <div class="popup-cropper__preview">
+      <div class="preview preview_1"></div>
+      <div class="preview preview_2"></div>
+      <div class="preview preview_3"></div>
+    </div>
+    <button @click="avaUpdate" class="popup-cropper__button">Upload</button>
+    <img
+      id="image"
+      class="popup-cropper__img"
+      :src="`${API_URL}profileImage/${login}`"
+      alt=""
+    />
+  </div>
 </template>
 
 <style lang="sass" scoped>
 $headerImg: 200px
 $avaSize: 160px
-  
+.preview
+  overflow: hidden
+  position: absolute
+  border-radius: 200px
+  z-index: 1
+  &_1
+    width: 160px
+    height: 160px
+    top: 20px
+    right: 40px
+  &_2
+    width: 100px
+    height: 100px
+    top: 190px
+    right: 40px
+  &_3
+    width: 40px
+    height: 40px
+    top: 300px
+    right: 40px
+
+.popup-cropper
+  position: absolute
+  top: 0
+  left: 0
+  height: 100dvh
+  width: 100vw
+  background-color: $customize
+  display: flex
+  justify-content: center
+  align-content: center
+  &__button
+    position: absolute
+    z-index: 1
+    top: 20px
+    left: 40px
+    background-color: $buttonBlue
+    color: $textColor
+    font-size: 1.4em
+    font-weight: 700
+    padding: .5em 1em
 .customize
   position: relative
   background-color: $customize
@@ -148,4 +241,8 @@ $avaSize: 160px
 .photo_camera
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24
   font-size: 4em
+
+.popup
+  &__close
+    display: none
 </style>

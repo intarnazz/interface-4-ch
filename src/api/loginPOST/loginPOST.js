@@ -1,6 +1,6 @@
 const API_URL = import.meta.env.VITE_API_URL;
 
-export async function loginPOST(login, pasword) {
+export async function loginPOST(login, password) {
   return await fetch(`${API_URL}login`, {
     method: "POST",
     headers: {
@@ -8,7 +8,7 @@ export async function loginPOST(login, pasword) {
     },
     body: JSON.stringify({
       login: login,
-      password: pasword,
+      password: password,
     }),
   })
     .then((response) => response.json())
