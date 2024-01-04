@@ -1,12 +1,9 @@
 <script setup>
-import { useRoute } from "vue-router";
-const $route = useRoute();
+import SectionProfile from "@/components/section/SectionProfile.vue";
 </script>
 
 <template>
-  <h1>
-    {{ $route.params.login }}
-  </h1>
+  <SectionProfile />
 </template>
 
 <style lang="sass" scoped></style>

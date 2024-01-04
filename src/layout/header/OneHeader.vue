@@ -2,7 +2,7 @@
 import { onMounted, ref } from "vue";
 import ComponentsFormAutorisation from "@/components/ComponentsFormAutorisation.vue";
 
-const emit = defineEmits();
+const emit = defineEmits(["userEvent"]);
 
 const API_URL = import.meta.env.VITE_API_URL;
 const authorizedLogin = ref(null);

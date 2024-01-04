@@ -1,14 +1,15 @@
 <script setup>
-import { ref } from "vue";
+import { nextTick, ref, watch } from "vue";
 import { loginPOST } from "@/api/api.js";
 
 const props = defineProps(["popupOpen"]);
-const emit = defineEmits();
+const emit = defineEmits(["colse"]);
 
 const login = ref("");
 const pasword = ref("");
 const authorizedLogin = ref(null);
 const logOutEvent = ref(true);
+const input = ref(null);
 
 async function submitForm() {
   const code = await loginPOST(login.value, pasword.value);
@@ -23,6 +24,16 @@ async function submitForm() {
 function popupColseEvent() {
   emit("colse", true);
 }
+function inputFocus(newValue) {
+  console.log(newValue);
+  if (newValue) {
+    nextTick(() => {
+      input.value.focus();
+    });
+  }
+}
+
+watch(() => props.popupOpen, inputFocus);
 </script>
 
 <template>
@@ -40,10 +51,12 @@ function popupColseEvent() {
       <div class="popup-login__form-wrapper">
         <div class="popup-login__row">
           <input
+            ref="input"
             placeholder="Login..."
             v-model="login"
             type="text"
             class="popup-login__input"
+            autofocus
           />
         </div>
         <div class="popup-login__row">
