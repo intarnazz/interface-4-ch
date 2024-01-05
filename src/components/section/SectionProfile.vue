@@ -103,8 +103,6 @@ function handleFileUpload(event) {
     });
   }
 }
-
-// watch(() => InputValue.value, InputValueChange);
 </script>
 
 <template>
@@ -148,7 +146,7 @@ function handleFileUpload(event) {
           <span class="material-symbols-outlined"> chevron_right </span>
         </div>
         <div class="profile__button-wrapper">
-          <button @click="customizeModEvent" class="profile__customize-profile">
+          <button v-if="root" @click="customizeModEvent" class="profile__customize-profile">
             Customize profile
           </button>
         </div>

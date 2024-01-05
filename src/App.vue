@@ -8,6 +8,7 @@ const logOut = ref();
 function userEvent(value) {
   logOut.value = value;
 }
+
 </script>
 
 <template>
