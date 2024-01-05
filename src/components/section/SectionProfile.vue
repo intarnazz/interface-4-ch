@@ -1,6 +1,6 @@
 <script setup>
 import { loginPOST } from "@/api/api.js";
-import { onMounted, ref } from "vue";
+import { nextTick, onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import Cropper from "cropperjs";
 
@@ -11,10 +11,15 @@ const login = ref("");
 const password = ref("");
 const subscribers = ref(0);
 const customizeMod = ref(false);
+const cropperOpen = ref(false);
+const fileInput = ref(null);
+const imageUrl = ref(null);
+
 let cropper;
 
 onMounted(async () => {
   login.value = localStorage.getItem("user");
+  imageUrl.value = `${API_URL}profileImage/${login.value}`;
   if ($route.params.login !== login.value) {
     root.value = false;
   } else {
@@ -31,14 +36,6 @@ onMounted(async () => {
       console.log("onMounted - ", e);
     }
   }
-  const image = document.getElementById("image");
-  cropper = new Cropper(image, {
-    aspectRatio: 1 / 1,
-    background: false,
-    viewMode: 1,
-    preview: ".preview",
-    crop(event) {},
-  });
 });
 function customizeModEvent() {
   if (!customizeMod.value) {
@@ -50,20 +47,14 @@ function customizeModEvent() {
 async function avaUpdate() {
   const croppedCanvas = await cropper.getCroppedCanvas();
 
-  // Преобразование canvas в Blob
-  const blobPromise = new Promise((resolve) => {
-    croppedCanvas.toBlob(resolve, 'image/jpeg'); // Здесь 'image/jpeg' - MIME-тип изображения, можно использовать другие в зависимости от вашего формата
+  const blob = await new Promise((resolve) => {
+    croppedCanvas.toBlob(resolve, "image/jpeg");
   });
-
-  const blob = await blobPromise;
-
-  // Создание объекта FormData и добавление файла
   const formData = new FormData();
-  formData.append('login', login.value);
-  formData.append('password', password.value);
-  formData.append('ava', blob, 'avatar.jpg');  // 'avatar.jpg' - имя файла, можете использовать своё
+  formData.append("login", login.value);
+  formData.append("password", password.value);
+  formData.append("ava", blob, "avatar.jpg");
 
-  // Отправка FormData на сервер
   return fetch(`${API_URL}profileImageUpdade`, {
     method: "POST",
     body: formData,
@@ -74,7 +65,46 @@ async function avaUpdate() {
       throw e;
     });
 }
+function cropperOpenEvent(bulen) {
+  cropperOpen.value = bulen;
+  if (bulen) {
+    if (cropper) {
+      cropper.destroy();
+    }
+    nextTick(() => {
+      const image = document.getElementById("image");
+      console.log(image);
+      cropper = new Cropper(image, {
+        aspectRatio: 1 / 1,
+        background: false,
+        viewMode: 1,
+        preview: ".preview",
+        movable: false,
+        zoomable: false,
+      });
+      cropper.setContainerData({
+        height: 500,
+      });
+    });
+  }
+}
 
+function openFileInput() {
+  fileInput.value.value = null;
+  fileInput.value.click();
+}
+function handleFileUpload(event) {
+  const file = event.target.files[0];
+  if (file) {
+    imageUrl.value = URL.createObjectURL(file);
+    nextTick(() => {
+      console.log(imageUrl.value);
+      cropperOpenEvent(true);
+    });
+  }
+}
+
+// watch(() => InputValue.value, InputValueChange);
 </script>
 
 <template>
@@ -93,7 +123,11 @@ async function avaUpdate() {
     </header>
     <main class="profile__main">
       <div class="profile__ava-wrapper">
-        <div v-if="customizeMod" class="profile__customize-ava customize">
+        <div
+          v-if="customizeMod"
+          @click="cropperOpenEvent(true)"
+          class="profile__customize-ava customize"
+        >
           <span class="material-symbols-outlined photo_camera">
             photo_camera
           </span>
@@ -121,25 +155,51 @@ async function avaUpdate() {
       </div>
     </main>
   </section>
-  <div class="popup popup-cropper">
+  <div v-if="cropperOpen" class="popup popup-cropper">
     <div class="popup-cropper__preview">
       <div class="preview preview_1"></div>
       <div class="preview preview_2"></div>
       <div class="preview preview_3"></div>
     </div>
-    <button @click="avaUpdate" class="popup-cropper__button">Upload</button>
-    <img
-      id="image"
-      class="popup-cropper__img"
-      :src="`${API_URL}profileImage/${login}`"
-      alt=""
+    <button
+      @click="avaUpdate"
+      class="popup-cropper__button popup-cropper__button_upload"
+    >
+      Upload
+    </button>
+    <button
+      @click="cropperOpenEvent(false)"
+      class="popup-cropper__button popup-cropper__button_close"
+    >
+      Close
+    </button>
+    <input
+      type="file"
+      ref="fileInput"
+      style="display: none"
+      @change="handleFileUpload"
     />
+    <button
+      @click="openFileInput"
+      class="popup-cropper__button popup-cropper__button_new-image"
+    >
+      New image
+    </button>
+    <div class="cropper-wrap-box">
+      <div id="cropper-container" class="cropper-container">
+        <img id="image" class="popup-cropper__img" :src="imageUrl" alt="" />
+      </div>
+    </div>
   </div>
 </template>
 
 <style lang="sass" scoped>
 $headerImg: 200px
 $avaSize: 160px
+$cropper: 96dvh
+.cropper-container
+  height: $cropper
+
 .preview
   overflow: hidden
   position: absolute
@@ -171,16 +231,27 @@ $avaSize: 160px
   display: flex
   justify-content: center
   align-content: center
+  &__button:hover
+    scale: 1.1
   &__button
+    transition: .1s
     position: absolute
     z-index: 1
-    top: 20px
-    left: 40px
     background-color: $buttonBlue
     color: $textColor
     font-size: 1.4em
     font-weight: 700
-    padding: .5em 1em
+    padding: .3em .8em
+    &_upload
+      top: 20px
+      left: 40px
+    &_close
+      top: 20px
+      left: 190px
+    &_new-image
+      width: 170px
+      top: 80px
+      left: 40px
 .customize
   position: relative
   background-color: $customize
