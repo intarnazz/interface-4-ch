@@ -36,6 +36,11 @@ onMounted(async () => {
       console.log("onMounted - ", e);
     }
   }
+  window.addEventListener("resize", () => {
+    setTimeout(() => {
+      cropperOpenEvent(true);
+    }, 10);
+  });
 });
 function customizeModEvent() {
   if (!customizeMod.value) {
@@ -76,14 +81,10 @@ function cropperOpenEvent(bulen) {
       console.log(image);
       cropper = new Cropper(image, {
         aspectRatio: 1 / 1,
-        background: false,
         viewMode: 1,
         preview: ".preview",
         movable: false,
         zoomable: false,
-      });
-      cropper.setContainerData({
-        height: 500,
       });
     });
   }
@@ -146,7 +147,11 @@ function handleFileUpload(event) {
           <span class="material-symbols-outlined"> chevron_right </span>
         </div>
         <div class="profile__button-wrapper">
-          <button v-if="root" @click="customizeModEvent" class="profile__customize-profile">
+          <button
+            v-if="root"
+            @click="customizeModEvent"
+            class="profile__customize-profile"
+          >
             Customize profile
           </button>
         </div>
@@ -183,10 +188,13 @@ function handleFileUpload(event) {
     >
       New image
     </button>
+
     <div class="cropper-wrap-box">
+      <div class="cropper-wrap-box__margin"></div>
       <div id="cropper-container" class="cropper-container">
         <img id="image" class="popup-cropper__img" :src="imageUrl" alt="" />
       </div>
+      <div class="cropper-wrap-box__margin"></div>
     </div>
   </div>
 </template>
@@ -195,7 +203,28 @@ function handleFileUpload(event) {
 $headerImg: 200px
 $avaSize: 160px
 $cropper: 96dvh
+.popup-cropper
+  &__img
+    width: $cropper
+    height: $cropper
+    object-fit: cover
+    // position: absolute
+    // top: 10dvh
+.cropper-wrap-box
+  display: flex
+  flex-direction: column
+  &__margin
+    flex: 1
+    background: $cropperBG
+.cropper-wrapper
+  height: 100dvh
+  width: 100%
+  counter-reset: none
 .cropper-container
+  display: flex
+  align-items: center
+  justify-content: center
+  position: static
   height: $cropper
 
 .preview
@@ -225,7 +254,6 @@ $cropper: 96dvh
   left: 0
   height: 100dvh
   width: 100vw
-  background-color: $customize
   display: flex
   justify-content: center
   align-content: center

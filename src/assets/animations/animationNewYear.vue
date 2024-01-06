@@ -17,7 +17,7 @@ setInterval(() => {
       snowflakeArr.value[i].pos_delta +
       (snowflakeArr.value[i].size / 1000) * snowflakeArr.value[i].pos_way;
   }
-  if (loop >= 200) {
+  if (loop >= 300) {
     const snowflakeSize = random(2, 5);
     const snowflakePos = random(1, 100);
     const snowflakeNew = {

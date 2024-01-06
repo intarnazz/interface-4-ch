@@ -13,7 +13,6 @@
   font-size: 0;
   line-height: 0;
   position: relative;
-  top: 10px;
   -ms-touch-action: none;
       touch-action: none;
   -webkit-user-select: none;
@@ -34,6 +33,10 @@
     width: 100%;
   }
 
+.cropper-modal {
+  background: rgba(0, 0, 0, .4);
+}
+
 .cropper-wrap-box,
 .cropper-canvas,
 .cropper-drag-box,
@@ -49,16 +52,6 @@
 .cropper-wrap-box,
 .cropper-canvas {
   overflow: hidden;
-}
-
-.cropper-drag-box {
-  background-color: #fff;
-  opacity: 0;
-}
-
-.cropper-modal {
-  background-color: #000;
-  opacity: 0.5;
 }
 
 .cropper-view-box {
@@ -138,7 +131,7 @@
 }
 
 .cropper-face {
-  background-color: #fff;
+/*  */
   left: 0;
   top: 0;
 }
@@ -276,10 +269,6 @@
 
 .cropper-invisible {
   opacity: 0;
-}
-
-.cropper-bg {
-  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAAA3NCSVQICAjb4U/gAAAABlBMVEXMzMz////TjRV2AAAACXBIWXMAAArrAAAK6wGCiw1aAAAAHHRFWHRTb2Z0d2FyZQBBZG9iZSBGaXJld29ya3MgQ1M26LyyjAAAABFJREFUCJlj+M/AgBVhF/0PAH6/D/HkDxOGAAAAAElFTkSuQmCC');
 }
 
 .cropper-hide {
