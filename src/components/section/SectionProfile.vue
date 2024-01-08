@@ -1,6 +1,6 @@
 <script setup>
 import { loginPOST } from "@/api/api.js";
-import { nextTick, onMounted, ref, watch } from "vue";
+import { nextTick, onBeforeUnmount, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import Cropper from "cropperjs";
 
@@ -16,6 +16,15 @@ const fileInput = ref(null);
 const imageUrl = ref(null);
 
 let cropper;
+
+function windowEvent() {
+  setTimeout(() => {
+    console.log("addEventListener");
+    if (cropperOpen.value) {
+      cropperOpenEvent(true);
+    }
+  }, 10);
+}
 
 onMounted(async () => {
   login.value = localStorage.getItem("user");
@@ -36,11 +45,11 @@ onMounted(async () => {
       console.log("onMounted - ", e);
     }
   }
-  window.addEventListener("resize", () => {
-    setTimeout(() => {
-      cropperOpenEvent(true);
-    }, 10);
-  });
+  window.addEventListener("resize", windowEvent);
+});
+onBeforeUnmount(() => {
+  console.log("removeEventListener");
+  window.removeEventListener("resize", windowEvent);
 });
 function customizeModEvent() {
   if (!customizeMod.value) {
@@ -99,7 +108,6 @@ function handleFileUpload(event) {
   if (file) {
     imageUrl.value = URL.createObjectURL(file);
     nextTick(() => {
-      console.log(imageUrl.value);
       cropperOpenEvent(true);
     });
   }
