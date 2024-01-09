@@ -2,13 +2,15 @@
 import { onMounted, ref } from "vue";
 import { videoGET } from "@/api/api.js";
 
+const props = defineProps(['autor'])
+
 const API_URL = import.meta.env.VITE_API_URL;
 const arr = ref(null);
 const errorServerNotFound = ref(false);
 
 onMounted(async () => {
   try {
-    arr.value = await videoGET();
+    arr.value = await videoGET(props.autor);
   } catch (e) {
     errorServerNotFound.value = true;
   }

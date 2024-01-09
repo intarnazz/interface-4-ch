@@ -3,6 +3,7 @@ import { loginPOST } from "@/api/api.js";
 import { nextTick, onBeforeUnmount, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import Cropper from "cropperjs";
+import SectionVideo from "@/components/section/SectionVideo.vue";
 
 const API_URL = import.meta.env.VITE_API_URL;
 const $route = useRoute();
@@ -238,6 +239,8 @@ function handleFileUpload(event) {
       <div class="cropper-wrap-box__margin"></div>
     </div>
   </div>
+  <hr>
+  <SectionVideo :autor="$route.params.login"/>
 </template>
 
 <style lang="sass" scoped>
