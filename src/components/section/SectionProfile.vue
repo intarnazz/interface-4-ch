@@ -13,8 +13,8 @@ const subscribers = ref(0);
 const customizeMod = ref(false);
 const cropperOpen = ref(false);
 const fileInput = ref(null);
-const userAvaURL = ref(null);
-const userHeaderURL = ref(null);
+const userAvaURL = ref(`${API_URL}profileImage/${$route.params.login}`);
+const userHeaderURL = ref(`${API_URL}profileHeader/${$route.params.login}`);
 const activImg = ref(null);
 
 let cropper;
@@ -30,8 +30,6 @@ function windowEvent() {
 
 onMounted(async () => {
   login.value = localStorage.getItem("user");
-  userAvaURL.value = `${API_URL}profileImage/${login.value}`;
-  userHeaderURL.value = `${API_URL}profileHeader/${login.value}`;
   if ($route.params.login !== login.value) {
     root.value = false;
   } else {
@@ -165,16 +163,12 @@ function handleFileUpload(event) {
             photo_camera
           </span>
         </div>
-        <img
-          :src="`${API_URL}profileImage/${login}`"
-          alt=""
-          class="profile__ava"
-        />
+        <img :src="userAvaURL" alt="" class="profile__ava" />
       </div>
       <div class="profile__info">
-        <h2 class="profile__user-name">{{ login }}</h2>
+        <h2 class="profile__user-name">{{ $route.params.login }}</h2>
         <div class="profile__sub">
-          @{{ login }} &#8226; {{ subscribers }} subscribers
+          @{{ $route.params.login }} &#8226; {{ subscribers }} subscribers
         </div>
         <div class="profile__about-user">
           More about this channel

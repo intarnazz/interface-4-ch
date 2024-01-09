@@ -12,3 +12,6 @@ export const CommentPOST = CommentPOSTModule.CommentPOST;
 
 import * as loginPOSTModule from "./loginPOST/loginPOST.js";
 export const loginPOST = loginPOSTModule.loginPOST;
+
+import * as GetUserModule from "./GetUser/GetUser.js";
+export const GetUser = GetUserModule.GetUser;

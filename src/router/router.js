@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+import { GetUser } from "@/api/api.js";
 import Home from "@/page/PageHome.vue";
 import ExpandedVideo from "@/page/PageExpandedVideo.vue";
 import Profile from "@/page/PageProfile.vue";
@@ -18,6 +19,15 @@ const routes = [
     path: "/Profile/:login",
     name: "Profile",
     component: Profile,
+    beforeEnter: async (to, from, next) => {
+      console.log(to.params.login);
+      const res = await GetUser(to.params.login);
+      console.log(res);
+      console.log(res.code);
+      if (res.code === 200) {
+        next();
+      }
+    },
   },
   {
     path: "/:catchAll(.*)",
