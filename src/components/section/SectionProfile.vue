@@ -13,7 +13,9 @@ const subscribers = ref(0);
 const customizeMod = ref(false);
 const cropperOpen = ref(false);
 const fileInput = ref(null);
-const imageUrl = ref(null);
+const userAvaURL = ref(null);
+const userHeaderURL = ref(null);
+const activImg = ref(null);
 
 let cropper;
 
@@ -28,7 +30,8 @@ function windowEvent() {
 
 onMounted(async () => {
   login.value = localStorage.getItem("user");
-  imageUrl.value = `${API_URL}profileImage/${login.value}`;
+  userAvaURL.value = `${API_URL}profileImage/${login.value}`;
+  userHeaderURL.value = `${API_URL}profileHeader/${login.value}`;
   if ($route.params.login !== login.value) {
     root.value = false;
   } else {
@@ -58,16 +61,19 @@ function customizeModEvent() {
     customizeMod.value = false;
   }
 }
-async function avaUpdate() {
+async function userImgUpdate() {
   const croppedCanvas = await cropper.getCroppedCanvas();
-
   const blob = await new Promise((resolve) => {
     croppedCanvas.toBlob(resolve, "image/jpeg");
   });
   const formData = new FormData();
+  if (activImg.value === "ava") {
+    formData.append("ava", blob, "ava.jpg");
+  } else {
+    formData.append("ava", blob, "header.jpg");
+  }
   formData.append("login", login.value);
   formData.append("password", password.value);
-  formData.append("ava", blob, "avatar.jpg");
 
   return fetch(`${API_URL}profileImageUpdade`, {
     method: "POST",
@@ -79,22 +85,34 @@ async function avaUpdate() {
       throw e;
     });
 }
-function cropperOpenEvent(bulen) {
+function cropperOpenEvent(bulen, idImage = "") {
+  if (cropper) {
+    cropper.destroy();
+  }
   cropperOpen.value = bulen;
   if (bulen) {
-    if (cropper) {
-      cropper.destroy();
+    if (idImage) {
+      activImg.value = idImage;
     }
     nextTick(() => {
-      const image = document.getElementById("image");
+      const image = document.getElementById(activImg.value);
       console.log(image);
-      cropper = new Cropper(image, {
-        aspectRatio: 1 / 1,
-        viewMode: 1,
-        preview: ".preview",
-        movable: false,
-        zoomable: false,
-      });
+      if (activImg.value === "ava") {
+        cropper = new Cropper(image, {
+          aspectRatio: 1 / 1,
+          viewMode: 1,
+          preview: ".preview",
+          movable: false,
+          zoomable: false,
+        });
+      } else {
+        cropper = new Cropper(image, {
+          viewMode: 1,
+          preview: ".preview",
+          movable: false,
+          zoomable: false,
+        });
+      }
     });
   }
 }
@@ -106,9 +124,17 @@ function openFileInput() {
 function handleFileUpload(event) {
   const file = event.target.files[0];
   if (file) {
-    imageUrl.value = URL.createObjectURL(file);
+    if (activImg == "ava") {
+      userAvaURL.value = URL.createObjectURL(file);
+    } else {
+      userHeaderURL.value = URL.createObjectURL(file);
+    }
     nextTick(() => {
-      cropperOpenEvent(true);
+      if (activImg == "ava") {
+        cropperOpenEvent(true, "ava");
+      } else {
+        cropperOpenEvent(true, "header");
+      }
     });
   }
 }
@@ -117,22 +143,22 @@ function handleFileUpload(event) {
 <template>
   <section class="profile">
     <header class="profile__header">
-      <div v-if="customizeMod" class="profile__customize-header customize">
+      <div
+        v-if="customizeMod"
+        @click="cropperOpenEvent(true, 'header')"
+        class="profile__customize-header customize"
+      >
         <span class="material-symbols-outlined photo_camera">
           photo_camera
         </span>
       </div>
-      <img
-        class="profile__header-img"
-        src="@/assets/img/ProfileHeaderDefaut.jpg"
-        alt=""
-      />
+      <img class="profile__header-img" :src="userHeaderURL" alt="" />
     </header>
     <main class="profile__main">
       <div class="profile__ava-wrapper">
         <div
           v-if="customizeMod"
-          @click="cropperOpenEvent(true)"
+          @click="cropperOpenEvent(true, 'ava')"
           class="profile__customize-ava customize"
         >
           <span class="material-symbols-outlined photo_camera">
@@ -173,7 +199,7 @@ function handleFileUpload(event) {
       <div class="preview preview_3"></div>
     </div>
     <button
-      @click="avaUpdate"
+      @click="userImgUpdate"
       class="popup-cropper__button popup-cropper__button_upload"
     >
       Upload
@@ -200,7 +226,20 @@ function handleFileUpload(event) {
     <div class="cropper-wrap-box">
       <div class="cropper-wrap-box__margin"></div>
       <div id="cropper-container" class="cropper-container">
-        <img id="image" class="popup-cropper__img" :src="imageUrl" alt="" />
+        <img
+          v-if="activImg === 'ava'"
+          id="ava"
+          class="popup-cropper__img"
+          :src="userAvaURL"
+          alt=""
+        />
+        <img
+          v-if="activImg === 'header'"
+          id="header"
+          class="popup-cropper__img"
+          :src="userHeaderURL"
+          alt=""
+        />
       </div>
       <div class="cropper-wrap-box__margin"></div>
     </div>
@@ -216,8 +255,6 @@ $cropper: 96dvh
     width: $cropper
     height: $cropper
     object-fit: cover
-    // position: absolute
-    // top: 10dvh
 .cropper-wrap-box
   display: flex
   flex-direction: column
