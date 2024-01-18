@@ -96,7 +96,7 @@ function cropperOpenEvent(bulen, idImage = "") {
     nextTick(() => {
       const image = document.getElementById(activImg.value);
       console.log(image);
-      if (activImg.value === "ava") {
+      if (activImg.value == "ava") {
         cropper = new Cropper(image, {
           aspectRatio: 1 / 1,
           viewMode: 1,
@@ -123,13 +123,14 @@ function openFileInput() {
 function handleFileUpload(event) {
   const file = event.target.files[0];
   if (file) {
-    if (activImg == "ava") {
+    if (activImg.value == "ava") {
       userAvaURL.value = URL.createObjectURL(file);
     } else {
       userHeaderURL.value = URL.createObjectURL(file);
     }
     nextTick(() => {
-      if (activImg == "ava") {
+      console.log(activImg.value);
+      if (activImg.value == "ava") {
         cropperOpenEvent(true, "ava");
       } else {
         cropperOpenEvent(true, "header");
@@ -239,24 +240,23 @@ function handleFileUpload(event) {
       <div class="cropper-wrap-box__margin"></div>
     </div>
   </div>
-  <hr>
-  <SectionVideo :autor="$route.params.login"/>
+  <hr />
+  <SectionVideo :autor="$route.params.login" />
 </template>
 
 <style lang="sass" scoped>
 $headerImg: 200px
 $avaSize: 160px
-$cropper: 96dvh
+$cropper: 95dvh
 .popup-cropper
   &__img
     width: $cropper
-    height: $cropper
     object-fit: cover
 .cropper-wrap-box
   display: flex
   flex-direction: column
   &__margin
-    flex: 1
+    height: calc( (100dvh - $cropper) / 2 + 1px )
     background: $cropperBG
 .cropper-wrapper
   height: 100dvh
@@ -291,11 +291,11 @@ $cropper: 96dvh
     right: 40px
 
 .popup-cropper
-  position: absolute
+  position: fixed
   top: 0
   left: 0
   height: 100dvh
-  width: 100vw
+  width: 100%
   display: flex
   justify-content: center
   align-content: center
