@@ -57,8 +57,21 @@ function logout() {
 
 <template>
   <header class="header">
-    <RouterLink :to="{ name: 'Home' }">
+    <RouterLink
+      :to="{ name: 'Home' }"
+      style="display: flex; align-items: center"
+    >
       <img src="/vite.svg" class="logo" alt="Vite logo" />
+      <h2
+        style="
+          font-size: 30px;
+          background: linear-gradient(to right, #41d0ffee, #bd34feee);
+          -webkit-background-clip: text;
+          color: transparent;
+        "
+      >
+        ♥Laravel♥
+      </h2>
     </RouterLink>
     <button
       v-if="!authorizedLogin"
@@ -71,7 +84,7 @@ function logout() {
       {{ authorizedLogin }}
       <div class="user__ava-wrapper">
         <img
-          :src="`${API_URL}profileImage/${authorizedLogin}`"
+          :src="`${API_URL}api/profileImage/${authorizedLogin}`"
           alt=""
           class="user__ava"
         />
@@ -83,7 +96,7 @@ function logout() {
       >
         <div class="popup-user-info__header">
           <img
-            :src="`${API_URL}profileImage/${authorizedLogin}`"
+            :src="`${API_URL}api/profileImage/${authorizedLogin}`"
             alt=""
             class="popup-user-info__ava"
           />
@@ -119,7 +132,7 @@ function logout() {
   top: 0
   width: 300px
   background-color: #282828
-  left: -240px
+  right: 40px
   border-radius: 20px
   cursor: default
   padding-bottom: 1em

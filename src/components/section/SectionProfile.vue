@@ -14,8 +14,8 @@ const subscribers = ref(0);
 const customizeMod = ref(false);
 const cropperOpen = ref(false);
 const fileInput = ref(null);
-const userAvaURL = ref(`${API_URL}profileImage/${$route.params.login}`);
-const userHeaderURL = ref(`${API_URL}profileHeader/${$route.params.login}`);
+const userAvaURL = ref(`${API_URL}api/profileImage/${$route.params.login}`);
+const userHeaderURL = ref(`${API_URL}api/profileHeader/${$route.params.login}`);
 const activImg = ref(null);
 
 let cropper;
@@ -68,9 +68,9 @@ async function userImgUpdate() {
   });
   const formData = new FormData();
   if (activImg.value === "ava") {
-    formData.append("ava", blob, "ava.jpg");
+    formData.append("ava", blob, `${login.value}.jpg`);
   } else {
-    formData.append("ava", blob, "header.jpg");
+    formData.append("header", blob, `${login.value}.jpg`);
   }
   formData.append("login", login.value);
   formData.append("password", password.value);
