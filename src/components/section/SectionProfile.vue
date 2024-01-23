@@ -30,6 +30,7 @@ function windowEvent() {
 }
 
 onMounted(async () => {
+  console.log("onMounted - SectionProfile");
   login.value = localStorage.getItem("user");
   if ($route.params.login !== login.value) {
     root.value = false;
@@ -74,12 +75,14 @@ async function userImgUpdate() {
   formData.append("login", login.value);
   formData.append("password", password.value);
 
-  return fetch(`${API_URL}profileImageUpdade`, {
+  fetch(`${API_URL}api/profileImageUpdade`, {
     method: "POST",
     body: formData,
   })
     .then((response) => response.json())
-    .then((json) => json.code)
+    .then((json) => {
+      console.log(json);
+    })
     .catch((e) => {
       throw e;
     });

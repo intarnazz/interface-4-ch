@@ -22,8 +22,7 @@ const routes = [
     beforeEnter: async (to, from, next) => {
       console.log(to.params.login);
       const res = await GetUser(to.params.login);
-      console.log(res);
-      console.log(res.code);
+      console.log("router", res);
       if (res.code === 200) {
         next();
       }
