@@ -13,7 +13,7 @@ const dislikeClickActiv = ref(false);
 async function fetchData() {
   likeClickActiv.value = false;
   dislikeClickActiv.value = false;
-  arr.value = await videoGET($route.params.id);
+  arr.value = await videoGET($route.params.id, "ById");
   like.value = arr.value[$route.params.id].like ?? 0;
   dislike.value = arr.value[$route.params.id].dislike ?? 0;
 }
@@ -26,16 +26,16 @@ const likeFix = computed(() => {
   return like.value >= 1000000000
     ? (like.value / 1000000000).toFixed(1) + "M"
     : like.value >= 1000
-    ? (like.value / 1000).toFixed(1) + "K"
-    : like.value;
+      ? (like.value / 1000).toFixed(1) + "K"
+      : like.value;
 });
 
 const dislikeFix = computed(() => {
   return dislike.value >= 1000000000
     ? (dislike.value / 1000000000).toFixed(1) + "M"
     : dislike.value >= 1000
-    ? (dislike.value / 1000).toFixed(1) + "K"
-    : dislike.value;
+      ? (dislike.value / 1000).toFixed(1) + "K"
+      : dislike.value;
 });
 
 async function likeClick() {
@@ -45,7 +45,7 @@ async function likeClick() {
     dislikeClickActiv.value = false;
     likeClickActiv.value = true;
 
-    await likeGET($route.params.id, -1, "dislike");
+    await likeGET($route.params.id, -1, "dis_like");
     await likeGET($route.params.id, 1, "like");
   } else {
     let delta;
@@ -69,7 +69,7 @@ async function dislikeClick() {
     dislikeClickActiv.value = true;
     likeClickActiv.value = false;
     await likeGET($route.params.id, -1, "like");
-    await likeGET($route.params.id, 1, "dislike");
+    await likeGET($route.params.id, 1, "dis_like");
   } else {
     let delta;
     if (!dislikeClickActiv.value) {
@@ -81,7 +81,7 @@ async function dislikeClick() {
     }
     dislike.value = dislike.value + delta;
 
-    await likeGET($route.params.id, delta, "dislike");
+    await likeGET($route.params.id, delta, "dis_like");
   }
 }
 </script>
@@ -89,24 +89,13 @@ async function dislikeClick() {
 <template>
   <div class="video__reaction reaction">
     <div @click="likeClick()" class="reaction__like">
-      <span
-        class="material-symbols-outlined"
-        :class="{ reaction__like_activ: likeClickActiv }"
-      >
-        thumb_up </span
-      >{{ likeFix }}
+      <span class="material-symbols-outlined" :class="{ reaction__like_activ: likeClickActiv }">
+        thumb_up </span>{{ likeFix }}
     </div>
-    <div
-      style="border-left: 1px rgba(255, 255, 255, 0.4) solid; height: 1.5em"
-      class="line"
-    ></div>
+    <div style="border-left: 1px rgba(255, 255, 255, 0.4) solid; height: 1.5em" class="line"></div>
     <div @click="dislikeClick()" class="reaction__dislike">
-      <span
-        class="material-symbols-outlined"
-        :class="{ reaction__dislike_activ: dislikeClickActiv }"
-      >
-        thumb_down </span
-      >{{ dislikeFix }}
+      <span class="material-symbols-outlined" :class="{ reaction__dislike_activ: dislikeClickActiv }">
+        thumb_down </span>{{ dislikeFix }}
     </div>
     <div class="reaction__delta">
       <div :style="`flex: ${like};`" class="reaction__delta_like"></div>

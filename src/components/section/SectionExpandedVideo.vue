@@ -19,7 +19,8 @@ const massageOpacity = ref(0);
 async function fetchData() {
   try {
     loding.value = true;
-    arr.value = await videoGET($route.params.id);
+    arr.value = await videoGET($route.params.id, "ById");
+    console.log(arr.value);
     loding.value = false;
   } catch (e) {
     errorServerNotFound.value = true;
@@ -77,7 +78,7 @@ watch(() => $route.params.id, fetchData);
           </div>
           <video
             v-else
-            :src="`${API_URL}image/${$route.params.id}?tred=video_api`"
+            :src="`${API_URL}api/videoById/${$route.params.id}`"
             class="video"
             controls
             autoplay
@@ -100,7 +101,7 @@ watch(() => $route.params.id, fetchData);
                 <div class="autor">
                   <img
                     class="autor__ava"
-                    :src="`${API_URL}profileImage/${
+                    :src="`${API_URL}api/profileImage/${
                       arr[$route.params.id].autor
                     }`"
                     alt=""
