@@ -32,6 +32,9 @@ function inputFocus(newValue) {
     });
   }
 }
+function UserRegistation() {
+  
+}
 
 watch(() => props.popupOpen, inputFocus);
 </script>
@@ -68,7 +71,8 @@ watch(() => props.popupOpen, inputFocus);
           />
         </div>
         <div class="popup-login__row">
-          <input type="submit" class="popup-login__button" />
+          <input type="submit" value="Войти" class="popup-login__button" />
+          <button @click="UserRegistation" class="popup-login__button" style="flex: 1;">Зарегистрироваться</button>
         </div>
       </div>
     </form>
@@ -103,6 +107,7 @@ watch(() => props.popupOpen, inputFocus);
   &__row
     position: relative
     display: flex
+    gap: 1em
   &__input
     color: #fff
     background-color: $formPost

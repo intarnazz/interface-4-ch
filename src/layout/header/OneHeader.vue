@@ -57,58 +57,34 @@ function logout() {
 
 <template>
   <header class="header">
-    <RouterLink
-      :to="{ name: 'Home' }"
-      style="display: flex; align-items: center"
-    >
+    <RouterLink :to="{ name: 'Home' }" style="display: flex; align-items: center">
       <img src="/vite.svg" class="logo" alt="Vite logo" />
-      <h2
-        style="
+      <h2 style="
           font-size: 30px;
           background: linear-gradient(to right, #41d0ffee, #bd34feee);
           -webkit-background-clip: text;
           color: transparent;
-        "
-      >
+        ">
         ♥Laravel♥
       </h2>
     </RouterLink>
-    <button
-      v-if="!authorizedLogin"
-      @click="popupOpenEvent()"
-      class="header__button-loggin button_loggin button"
-    >
+    <button v-if="!authorizedLogin" @click="popupOpenEvent()" class="header__button-loggin button_loggin button">
       <span class="material-symbols-outlined"> person </span> Войти
     </button>
     <div v-else @click="userInfoOpenEvent()" class="header__user user">
       {{ authorizedLogin }}
       <div class="user__ava-wrapper">
-        <img
-          :src="`${API_URL}api/profileImage/${authorizedLogin}`"
-          alt=""
-          class="user__ava"
-        />
+        <img :src="`${API_URL}api/profileImage/${authorizedLogin}`" alt="" class="user__ava" />
       </div>
-      <div
-        ref="popup"
-        class="popup popup-user-info"
-        :class="{ popup__close: !userInfoOpen }"
-      >
+      <div ref="popup" class="popup popup-user-info" :class="{ popup__close: !userInfoOpen }">
         <div class="popup-user-info__header">
-          <img
-            :src="`${API_URL}api/profileImage/${authorizedLogin}`"
-            alt=""
-            class="popup-user-info__ava"
-          />
+          <img :src="`${API_URL}api/profileImage/${authorizedLogin}`" alt="" class="popup-user-info__ava" />
           {{ authorizedLogin }}
         </div>
         <hr />
         <ul class="popup-user-info__list">
           <li>
-            <RouterLink
-              :to="{ name: 'Profile', params: { login: authorizedLogin } }"
-              class="popup-user-info__item"
-            >
+            <RouterLink :to="{ name: 'Profile', params: { login: authorizedLogin } }" class="popup-user-info__item">
               <span class="material-symbols-outlined"> person </span>
               Your porofile
             </RouterLink>
@@ -120,10 +96,7 @@ function logout() {
       </div>
     </div>
   </header>
-  <ComponentsFormAutorisation
-    @colse="ComponentsFormAutorisationEventColse"
-    :popupOpen="loginFormOpen"
-  />
+  <ComponentsFormAutorisation @colse="ComponentsFormAutorisationEventColse" :popupOpen="loginFormOpen" />
 </template>
 
 <style lang="sass" scoped>

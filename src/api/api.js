@@ -15,3 +15,6 @@ export const loginPOST = loginPOSTModule.loginPOST;
 
 import * as GetUserModule from "./GetUser/GetUser.js";
 export const GetUser = GetUserModule.GetUser;
+
+import * as UserRegistarationPOSTModule from "./UserRegistarationPOST/UserRegistarationPOST.js";
+export const UserRegistarationPOST = UserRegistarationPOSTModule.UserRegistarationPOST;

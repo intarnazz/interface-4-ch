@@ -81,7 +81,7 @@ watch(() => props.logOutEvent, fetchData);
         class="comment-section__form-posting"
       >
         <img
-          :src="`${API_URL}profileImage/${authorizedLogin}`"
+          :src="`${API_URL}api/profileImage/${authorizedLogin}`"
           alt=""
           class="comment-section__ava ava"
         />
@@ -138,7 +138,7 @@ watch(() => props.logOutEvent, fetchData);
           class="users-comments__item"
         >
           <img
-            :src="`${API_URL}profileImage/${comment.user}`"
+            :src="`${API_URL}api/profileImage/${comment.user}`"
             alt=""
             class="users-comments__ava ava"
           />
