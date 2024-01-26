@@ -1,6 +1,6 @@
 <script setup>
 import { nextTick, ref, watch } from "vue";
-import { loginPOST } from "@/api/api.js";
+import { loginPOST, UserRegistarationPOST } from "@/api/api.js";
 
 const props = defineProps(["popupOpen"]);
 const emit = defineEmits(["colse"]);
@@ -11,14 +11,18 @@ const authorizedLogin = ref(null);
 const logOutEvent = ref(true);
 const input = ref(null);
 
+function localStorageUpdata() {
+  authorizedLogin.value = login.value;
+  localStorage.setItem("user", login.value);
+  localStorage.setItem("pasword", pasword.value);
+  emit("colse", true);
+  logOutEvent.value = false;
+}
+
 async function submitForm() {
   const code = await loginPOST(login.value, pasword.value);
   if (code === 200) {
-    authorizedLogin.value = login.value;
-    localStorage.setItem("user", login.value);
-    localStorage.setItem("pasword", pasword.value);
-    emit("colse", true);
-    logOutEvent.value = false;
+    localStorageUpdata();
   }
 }
 function popupColseEvent() {
@@ -32,8 +36,11 @@ function inputFocus(newValue) {
     });
   }
 }
-function UserRegistation() {
-  
+async function UserRegistation() {
+  const code = await UserRegistarationPOST(login.value, pasword.value);
+  if (code === 200) {
+    localStorageUpdata();
+  }
 }
 
 watch(() => props.popupOpen, inputFocus);
@@ -45,12 +52,7 @@ watch(() => props.popupOpen, inputFocus);
     class="popup popup-login"
     :class="{ popup__close: !props.popupOpen }"
   >
-    <form
-      @click.stop
-      @submit.prevent="submitForm"
-      class="popup-login__form"
-      action=""
-    >
+    <form @submit.prevent="" @click.stop class="popup-login__form" action="">
       <div class="popup-login__form-wrapper">
         <div class="popup-login__row">
           <input
@@ -71,8 +73,14 @@ watch(() => props.popupOpen, inputFocus);
           />
         </div>
         <div class="popup-login__row">
-          <input type="submit" value="Войти" class="popup-login__button" />
-          <button @click="UserRegistation" class="popup-login__button" style="flex: 1;">Зарегистрироваться</button>
+          <button @click="submitForm" class="popup-login__button">Войти</button>
+          <button
+            @click="UserRegistation"
+            class="popup-login__button"
+            style="flex: 1"
+          >
+            Зарегистрироваться
+          </button>
         </div>
       </div>
     </form>

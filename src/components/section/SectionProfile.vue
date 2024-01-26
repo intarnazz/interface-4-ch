@@ -187,6 +187,13 @@ function handleFileUpload(event) {
           >
             Customize profile
           </button>
+          <button
+            v-if="root"
+            @click="customizeModEvent"
+            class="profile__customize-profile"
+          >
+            Customize profile
+          </button>
         </div>
       </div>
     </main>
@@ -337,6 +344,9 @@ $cropper: 95dvh
   display: flex
   flex-direction: column
   gap: 2em
+  &__button-wrapper
+    display: flex
+    gap: 1em
   &__customize-profile
     background-color: $formPost
     padding: .5em 1.2em

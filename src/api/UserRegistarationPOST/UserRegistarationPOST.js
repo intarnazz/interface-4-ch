@@ -1,21 +1,23 @@
 const API_URL = import.meta.env.VITE_API_URL;
 
-export async function UserRegistarationPOST() {
-  return await fetch(`${API_URL}/api/PostRegistationUser`, {
+export async function UserRegistarationPOST(login, password) {
+  return await fetch(`${API_URL}api/PostRegistationUser`, {
     method: "POST",
     headers: {
-      "content-type": "application/json",
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      login: user,
-      password: psw,
-    })
+      login: login,
+      password: password,
+    }),
   })
     .then((response) => response.json())
     .then((json) => {
-      return json
+      console.log(json);
+      return json.code;
     })
-    .catch(e => {
-      throw e
-    })
+    .catch((e) => {
+      console.log(json);
+      throw e;
+    });
 }

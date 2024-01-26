@@ -148,6 +148,7 @@ watch(() => $route.params.id, fetchData);
   background-color: #464646
   border-radius: 20px
   box-shadow: 0px 0px 10px #000
+  pointer-events: none
 
 .button-share
   display: flex
